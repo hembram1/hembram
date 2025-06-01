@@ -11,7 +11,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <header className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-50 py-3">
+    <header className="bg-background/80 backdrop-blur-sm sticky top-0 z-50 py-3">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
         {/* Logo / Brand Name Pill */}
         <div className="bg-card/80 backdrop-blur-sm shadow-md rounded-full py-1 sm:py-1.5 px-4 flex items-center">
