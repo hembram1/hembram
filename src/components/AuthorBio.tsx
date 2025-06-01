@@ -30,9 +30,9 @@ export default function AuthorBio() {
                 <Button
                   key={link.platform}
                   asChild
-                  variant="ghost"
+                  variant="secondary"
                   size="icon"
-                  className="text-foreground/70 hover:text-primary hover:bg-accent/10 rounded-full"
+                  className="rounded-full"
                   title={`Follow ${author.name} on ${link.platform}`}
                 >
                   <a href={link.url} target="_blank" rel="noopener noreferrer">
