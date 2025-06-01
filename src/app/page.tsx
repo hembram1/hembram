@@ -37,6 +37,7 @@ export default function HomePage() {
                   text={currentlyWritingBook}
                   speed={100}
                   cursorClassName="ml-1"
+                  loop={true} 
                 />
               </h3>
               <p className="text-sm text-foreground/70 max-w-xl mx-auto">
@@ -50,7 +51,7 @@ export default function HomePage() {
       <section id="featured-books" className="mb-12">
         <Card className="max-w-3xl mx-auto overflow-hidden shadow-xl rounded-2xl p-6 sm:p-8 md:p-10 relative bg-card text-center">
           <div
-            className="absolute -top-8 -right-8 w-28 h-28 sm:-top-10 sm:-right-10 sm:w-36 sm:h-36 md:-top-12 md:-right-12 md:w-44 md:h-44 lg:-top-14 lg:-right-14 bg-accent/10 rounded-full transform rotate-12 pointer-events-none -z-0"
+            className="absolute -top-8 -right-8 w-28 h-28 sm:-top-10 sm:-right-10 sm:w-36 sm:h-36 md:-top-12 md:-right-12 md:w-44 md:h-44 lg:-top-16 lg:-right-16 bg-accent/10 rounded-full transform rotate-12 pointer-events-none -z-0"
             aria-hidden="true"
           />
           <div className="relative z-10">
