@@ -108,12 +108,15 @@ export default function AdminBooksPage() {
                     <p className="text-sm text-muted-foreground">{book.genre}</p>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" asChild> {/* Edit button will link to /admin/books/[id]/edit later */}
-                       <Link href={`/admin/books/${book.id}/edit`}> {/* Placeholder: Edit functionality to be added */}
-                        <span>
-                          <Pencil className="mr-1 h-4 w-4" /> Edit
-                        </span>
-                       </Link>
+                    <Button variant="outline" size="sm" asChild>
+                      {/* Wrap Link in a span to ensure Slot gets a simple child */}
+                      <span>
+                        <Link href={`/admin/books/${book.id}/edit`}>
+                          <span>
+                            <Pencil className="mr-1 h-4 w-4" /> Edit
+                          </span>
+                        </Link>
+                      </span>
                     </Button>
                     <AlertDialogTrigger asChild>
                       <Button variant="destructive" size="sm" onClick={() => setBookToDelete(book)}>
