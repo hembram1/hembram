@@ -58,31 +58,26 @@ export default function Navbar() {
 
       {/* Mobile Bottom Navigation Bar */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/75 backdrop-blur-lg border-t border-border shadow-[0_-2px_10px_rgba(0,0,0,0.08)] h-14">
-        <div className="mx-auto h-full flex justify-around items-center px-2">
+        <div className="mx-auto h-full flex justify-around items-center px-2 space-x-1 sm:space-x-2">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
-              <Link
+              <div
                 key={link.href}
-                href={link.href}
-                className={cn(
-                  "flex flex-col items-center justify-center flex-1 h-full text-xs transition-colors relative group",
-                  isActive
-                    ? "text-primary"
-                    : "text-foreground/70 hover:text-primary",
-                )}
+                className="bg-card/80 backdrop-blur-lg shadow-md rounded-tl-xl rounded-br-xl py-1.5 px-2.5 flex-1 text-center"
               >
-                {/* Placeholder for icon if you add them later */}
-                {/* <link.icon className="h-5 w-5 mb-0.5" /> */}
-                <span className="truncate">{link.label}</span>
-                <span
+                <Link
+                  href={link.href}
                   className={cn(
-                    "absolute left-1/2 transform -translate-x-1/2 bottom-1 block h-[3px] w-5 rounded-full bg-primary transition-transform duration-200 ease-out",
-                    isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-50"
+                    "text-xs font-medium transition-colors w-full inline-block",
+                    isActive
+                      ? "text-primary"
+                      : "text-foreground/70 hover:text-primary",
                   )}
-                  aria-hidden="true"
-                />
-              </Link>
+                >
+                  <span className="truncate">{link.label}</span>
+                </Link>
+              </div>
             );
           })}
         </div>
@@ -90,3 +85,4 @@ export default function Navbar() {
     </>
   );
 }
+
