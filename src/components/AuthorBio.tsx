@@ -1,6 +1,9 @@
+
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { author } from "@/lib/constants";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function AuthorBio() {
   return (
@@ -10,7 +13,7 @@ export default function AuthorBio() {
     >
       <div className="flex flex-col md:flex-row items-start gap-6 md:gap-8">
         {/* Image Section (Left) */}
-        <div className="w-full md:w-1/3 flex-shrink-0">
+        <div className="w-full md:w-1/3 flex-shrink-0 flex flex-col items-center md:items-start">
           <div className="relative aspect-square w-full max-w-[200px] md:max-w-full mx-auto md:mx-0 rounded-lg overflow-hidden shadow-md">
             <Image
               src={author.authorImageUrl || 'https://placehold.co/250x250.png'}
@@ -21,6 +24,25 @@ export default function AuthorBio() {
               priority
             />
           </div>
+          {author.socialLinks && author.socialLinks.length > 0 && (
+            <div className="mt-4 flex flex-wrap justify-center md:justify-start gap-3">
+              {author.socialLinks.map((link) => (
+                <Button
+                  key={link.platform}
+                  asChild
+                  variant="ghost"
+                  size="icon"
+                  className="text-foreground/70 hover:text-primary hover:bg-accent/10 rounded-full"
+                  title={`Follow ${author.name} on ${link.platform}`}
+                >
+                  <a href={link.url} target="_blank" rel="noopener noreferrer">
+                    {link.iconName && <link.iconName className="h-5 w-5" />}
+                    <span className="sr-only">{link.platform}</span>
+                  </a>
+                </Button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Text Section (Right) */}
