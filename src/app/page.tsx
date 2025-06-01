@@ -12,10 +12,6 @@ export default function HomePage() {
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <section id="author-intro" className="mb-12">
-        <AuthorBio />
-      </section>
-
       <section id="featured-books" className="mb-12">
         <Card className="max-w-3xl mx-auto mb-10 overflow-hidden shadow-xl rounded-2xl p-6 sm:p-8 md:p-10 relative bg-card text-center">
           <div
@@ -48,6 +44,10 @@ export default function HomePage() {
             </Link>
           </Button>
         </div>
+      </section>
+
+      <section id="author-intro" className="mb-12">
+        <AuthorBio />
       </section>
     </div>
   );
