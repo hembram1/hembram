@@ -28,31 +28,28 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Desktop Navigation Links Pill */}
-          <nav className="bg-card/80 backdrop-blur-lg shadow-md rounded-tl-2xl rounded-br-2xl py-2 px-5 hidden md:flex items-center space-x-3">
+          {/* Desktop Navigation Links - Individual Pills */}
+          <nav className="hidden md:flex items-center space-x-3">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
-                <Link
+                <div 
                   key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "text-sm font-medium transition-colors relative group py-2 px-3 rounded-full",
-                    isActive
-                      ? "text-primary"
-                      : "text-foreground/70 hover:text-primary hover:bg-muted/50",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
-                  )}
+                  className="bg-card/80 backdrop-blur-lg shadow-md rounded-tl-2xl rounded-br-2xl py-1.5 px-3"
                 >
-                  {link.label}
-                  <span
+                  <Link
+                    href={link.href}
                     className={cn(
-                      "absolute left-0 bottom-0.5 block h-[2px] w-full bg-primary transition-transform duration-300 ease-out",
-                      isActive ? "scale-x-75" : "scale-x-0 group-hover:scale-x-75"
+                      "text-sm font-medium transition-colors",
+                      isActive
+                        ? "text-primary"
+                        : "text-foreground/70 hover:text-primary",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-background"
                     )}
-                    aria-hidden="true"
-                  />
-                </Link>
+                  >
+                    {link.label}
+                  </Link>
+                </div>
               );
             })}
           </nav>
