@@ -26,7 +26,11 @@ export default function HomePage() {
               Currently Crafting
             </h2>
           </div>
-          <Card className="max-w-3xl mx-auto shadow-xl rounded-2xl bg-card text-center p-6 sm:p-8 md:p-10 pt-12 sm:pt-14 md:pt-16">
+          <Card className="relative max-w-3xl mx-auto shadow-xl rounded-2xl bg-card text-center p-6 sm:p-8 md:p-10 pt-12 sm:pt-14 md:pt-16">
+            <div
+              className="absolute -bottom-8 -left-8 w-28 h-28 sm:-bottom-10 sm:-left-10 sm:w-36 sm:h-36 md:-bottom-12 md:-left-12 md:w-44 md:h-44 lg:-bottom-16 lg:-left-16 bg-primary/10 rounded-full transform -rotate-12 pointer-events-none -z-0"
+              aria-hidden="true"
+            />
             <div className="relative z-10">
               <p className="text-md sm:text-lg text-foreground/80 max-w-2xl mx-auto">
                 Hembram is currently weaving magic into a new tale:
@@ -37,7 +41,7 @@ export default function HomePage() {
                   text={currentlyWritingBook}
                   speed={100}
                   cursorClassName="ml-1"
-                  loop={true} 
+                  loop={true}
                 />
               </h3>
               <p className="text-sm text-foreground/70 max-w-xl mx-auto">
