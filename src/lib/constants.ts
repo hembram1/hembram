@@ -71,7 +71,8 @@ export const books: Book[] = [
 ];
 
 export const navLinks = [
-  { href: '/', label: 'Home' },
+  { href: '/', label: 'About' },
   { href: '/books', label: 'Books' },
   { href: '/contact', label: 'Contact' },
 ];
+
