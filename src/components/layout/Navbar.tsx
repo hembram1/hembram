@@ -60,7 +60,7 @@ export default function Navbar() {
       </header>
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur border-t border-border shadow-[0_-2px_10px_rgba(0,0,0,0.08)] h-14">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/75 backdrop-blur border-t border-border shadow-[0_-2px_10px_rgba(0,0,0,0.08)] h-14">
         <div className="mx-auto h-full flex justify-around items-center px-2">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
