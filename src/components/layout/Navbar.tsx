@@ -12,22 +12,22 @@ export default function Navbar() {
 
   return (
     <header className="bg-background/80 backdrop-blur-sm sticky top-0 z-50 py-3">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-row items-center justify-between gap-4">
         {/* Logo / Brand Name Pill */}
-        <div className="bg-card/80 backdrop-blur-sm shadow-md rounded-tl-2xl rounded-br-2xl py-1 sm:py-1.5 px-4 flex items-center">
+        <div className="bg-card/80 backdrop-blur-sm shadow-md rounded-tl-2xl rounded-br-2xl py-1.5 px-4 flex items-center">
           <Link
             href="/"
             className="flex items-center gap-2 group transition-opacity hover:opacity-80"
           >
-            <BookMarked className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
-            <span className="text-xl sm:text-2xl font-headline font-semibold text-primary">
+            <BookMarked className="h-7 w-7 text-primary" />
+            <span className="text-2xl font-headline font-semibold text-primary">
               Hembram
             </span>
           </Link>
         </div>
 
         {/* Navigation Links Pill */}
-        <nav className="bg-card/80 backdrop-blur-sm shadow-md rounded-tl-2xl rounded-br-2xl py-1.5 px-3 sm:py-2 sm:px-5 flex items-center space-x-1 sm:space-x-3">
+        <nav className="bg-card/80 backdrop-blur-sm shadow-md rounded-tl-2xl rounded-br-2xl py-2 px-5 flex items-center space-x-3">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -35,7 +35,7 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "text-xs sm:text-sm font-medium transition-colors relative group py-2 px-2 sm:px-3 rounded-full",
+                  "text-sm font-medium transition-colors relative group py-2 px-3 rounded-full", // Adjusted text size and padding
                   isActive
                     ? "text-primary"
                     : "text-foreground/70 hover:text-primary hover:bg-muted/50",
