@@ -110,7 +110,9 @@ export default function AdminBooksPage() {
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" asChild disabled> {/* Edit button will link to /admin/books/[id]/edit later */}
                        <Link href={`/admin/books/${book.id}/edit`}> {/* Placeholder: Edit functionality to be added */}
-                        <Pencil className="mr-1 h-4 w-4" /> Edit
+                        <span>
+                          <Pencil className="mr-1 h-4 w-4" /> Edit
+                        </span>
                        </Link>
                     </Button>
                     <AlertDialogTrigger asChild>
