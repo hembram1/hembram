@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { books } from '@/lib/constants';
 import { ArrowRight, PenTool } from 'lucide-react';
+import TypingAnimation from '@/components/TypingAnimation'; // Import the new component
 
 export default function HomePage() {
   const featuredBooks = books.slice(0, 3); // Show first 3 books as featured
@@ -33,11 +34,13 @@ export default function HomePage() {
             <p className="mt-4 text-md sm:text-lg text-foreground/80 max-w-2xl mx-auto">
               Hembram is currently weaving magic into a new tale:
             </p>
-            <h3 
-              className="mt-3 mb-2 text-2xl sm:text-3xl font-headline font-semibold 
-                         bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent 
-                         animate-shimmer bg-size-200">
-              {currentlyWritingBook}
+            <h3
+              className="mt-3 mb-2 text-2xl sm:text-3xl font-headline font-semibold text-primary min-h-[2.5em] sm:min-h-[1.5em]">
+              <TypingAnimation
+                text={currentlyWritingBook}
+                speed={100}
+                cursorClassName="ml-1"
+              />
             </h3>
             <p className="text-sm text-foreground/70 max-w-xl mx-auto">
               Stay tuned for updates on this exciting new adventure!
@@ -61,7 +64,7 @@ export default function HomePage() {
             </p>
           </div>
         </Card>
-        
+
         {featuredBooks.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
             {featuredBooks.map((book) => (
