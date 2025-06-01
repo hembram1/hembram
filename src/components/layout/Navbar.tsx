@@ -20,7 +20,7 @@ export default function Navbar() {
         >
           <BookMarked size={28} className="text-primary" />
           <span className="text-2xl font-headline font-semibold text-primary">
-            Hembram Writes
+            Hembram
           </span>
         </Link>
 

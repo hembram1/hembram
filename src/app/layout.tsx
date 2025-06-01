@@ -5,7 +5,7 @@ import Footer from '@/components/layout/Footer';
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: 'Hembram Writes',
+  title: 'Hembram',
   description: 'The official website of author Hembram.',
 };
 
