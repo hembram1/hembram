@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import Navbar from '@/components/layout/Navbar';
@@ -24,7 +25,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen">
         <Navbar />
-        <main className="flex-grow">
+        <main className="flex-grow pb-16 md:pb-0">
           {children}
         </main>
         <Footer />
