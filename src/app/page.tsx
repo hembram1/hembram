@@ -4,13 +4,13 @@ import AuthorBio from '@/components/AuthorBio';
 import BookCard from '@/components/BookCard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { books } from '@/lib/constants';
+import { books, author } from '@/lib/constants'; // Import author
 import { ArrowRight, PenTool } from 'lucide-react';
-import TypingAnimation from '@/components/TypingAnimation'; // Import the new component
+import TypingAnimation from '@/components/TypingAnimation';
 
 export default function HomePage() {
-  const featuredBooks = books.slice(0, 3); // Show first 3 books as featured
-  const currentlyWritingBook = "The Serpent's Cipher"; // Placeholder for now
+  const featuredBooks = books.slice(0, 3);
+  const currentlyWritingBook = author.currentlyCraftingBookTitle || "Stay tuned for the next adventure!";
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -42,6 +42,7 @@ export default function HomePage() {
                   speed={100}
                   cursorClassName="ml-1"
                   loop={true}
+                  delayBeforeRestart={2000}
                 />
               </h3>
               <p className="text-sm text-foreground/70 max-w-xl mx-auto">

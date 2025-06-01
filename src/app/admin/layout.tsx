@@ -1,8 +1,8 @@
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Shield, Settings, User, BookOpen, Link2, LayoutDashboard } from 'lucide-react';
-import { Sidebar, SidebarProvider, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarHeader, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'; // Assuming you have a Sidebar component
+import { Shield, Settings, User, BookOpen, Link2, LayoutDashboard, PenTool } from 'lucide-react';
+import { Sidebar, SidebarProvider, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarHeader, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -17,6 +17,7 @@ const adminNavLinks = [
   { href: '/admin/author-bio', label: 'Author Bio', icon: User },
   { href: '/admin/books', label: 'Books', icon: BookOpen },
   { href: '/admin/social-links', label: 'Social Links', icon: Link2 },
+  { href: '/admin/currently-crafting', label: 'Currently Crafting', icon: PenTool },
 ];
 
 export default function AdminLayout({

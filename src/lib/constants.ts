@@ -1,6 +1,6 @@
 
 import type { Book } from './types';
-import { BookOpen, Users, Feather, Heart, Shield, Rocket, Microscope, Drama, Library, Mail, Twitter, Instagram, Linkedin, Facebook, X } from 'lucide-react';
+import { BookOpen, Users, Feather, Heart, Shield, Rocket, Microscope, Drama, Library, Mail, Twitter, Instagram, Linkedin, Facebook, X, PenTool } from 'lucide-react';
 
 export const author = {
   name: 'Hembram',
@@ -13,7 +13,8 @@ export const author = {
     { platform: 'Instagram', url: 'https://instagram.com/hembramwrites', iconName: Instagram },
     { platform: 'LinkedIn', url: 'https://linkedin.com/in/hembramwrites', iconName: Linkedin },
     { platform: 'Facebook', url: 'https://facebook.com/hembramwrites', iconName: Facebook },
-  ]
+  ],
+  currentlyCraftingBookTitle: "The Serpent's Cipher", // Added new field
 };
 
 export const books: Book[] = [
