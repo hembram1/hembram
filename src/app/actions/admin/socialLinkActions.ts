@@ -2,7 +2,7 @@
 'use server';
 
 import { z } from 'zod';
-import type { SocialLink } from '@/lib/types'; // Assuming iconName is optional or handled differently for new links
+import type { SocialLink } from '@/lib/types'; 
 
 const socialLinkSchema = z.object({
   platform: z.string().min(2),
@@ -15,7 +15,8 @@ export type SocialLinkFormValues = z.infer<typeof socialLinkSchema>;
 interface SubmissionResult {
   success: boolean;
   message?: string;
-  newLink?: Omit<SocialLink, 'iconName'> & { iconName?: SocialLink['iconName'] }; // Allow iconName to be undefined
+  newLink?: Omit<SocialLink, 'iconName'> & { iconName?: SocialLink['iconName'] }; 
+  updatedLink?: Omit<SocialLink, 'iconName'> & { iconName?: SocialLink['iconName'] };
 }
 
 export async function addSocialLink(
@@ -32,23 +33,16 @@ export async function addSocialLink(
 
   const { platform, url } = parsedValues.data;
 
-  // --- SIMULATION ---
-  // In a real application, you would add this to the database.
-  // For this simulation, we'll log it and return the new link structure.
   console.log('Simulating adding new Social Link:');
   console.log('Platform:', platform);
   console.log('URL:', url);
 
-  // Simulate a delay
   await new Promise(resolve => setTimeout(resolve, 500));
 
-  // Construct a new link object similar to what would be stored.
-  // Icon selection would be more complex in a real app.
   const newLinkEntry: Omit<SocialLink, 'iconName'> & { iconName?: SocialLink['iconName'] } = { 
     platform, 
     url 
   };
-
 
   return { 
     success: true, 
@@ -57,6 +51,50 @@ export async function addSocialLink(
   };
 }
 
-// Placeholder for future actions (update, delete)
-// export async function updateSocialLink(id: string, values: SocialLinkFormValues): Promise<SubmissionResult> { ... }
-// export async function deleteSocialLink(id: string): Promise<SubmissionResult> { ... }
+export async function updateSocialLink(
+  originalPlatform: string, // Used as an ID for simulation
+  values: SocialLinkFormValues
+): Promise<SubmissionResult> {
+  const parsedValues = socialLinkSchema.safeParse(values);
+
+  if (!parsedValues.success) {
+    return {
+      success: false,
+      message: 'Invalid form data. Please check your inputs.',
+    };
+  }
+
+  const { platform, url } = parsedValues.data;
+
+  console.log(`Simulating update for Social Link (original platform: ${originalPlatform}):`);
+  console.log('New Platform:', platform);
+  console.log('New URL:', url);
+
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  const updatedLinkEntry: Omit<SocialLink, 'iconName'> & { iconName?: SocialLink['iconName'] } = { 
+    platform, 
+    url 
+  };
+
+  return { 
+    success: true, 
+    message: 'Social link (simulated) update successful! Data logged to console.',
+    updatedLink: updatedLinkEntry
+  };
+}
+
+export async function deleteSocialLink(
+  platformToDelete: string // Used as an ID for simulation
+): Promise<SubmissionResult> {
+  console.log(`Simulating delete for Social Link (platform: ${platformToDelete}):`);
+  
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  return { 
+    success: true, 
+    message: `Social link for ${platformToDelete} (simulated) deletion successful! Data logged to console.`
+  };
+}
+
+    
