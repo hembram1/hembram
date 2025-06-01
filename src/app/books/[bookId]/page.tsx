@@ -1,12 +1,13 @@
+
 import { books, author } from '@/lib/constants';
 import type { Book, Review, PurchaseLink } from '@/lib/types';
-import { generateBookBlurb, type GenerateBookBlurbInput } from '@/ai/flows/generate-book-blurb';
+// import { generateBookBlurb, type GenerateBookBlurbInput } from '@/ai/flows/generate-book-blurb'; // Removed AI blurb import
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { AlertCircle, BookOpenCheck, Bot, ExternalLink, MessageSquare, ShoppingCart, Star, Users, ThumbsUp } from 'lucide-react';
+import { AlertCircle, BookOpenCheck, /* Bot, */ ExternalLink, MessageSquare, ShoppingCart, Star, Users, ThumbsUp } from 'lucide-react'; // Removed Bot icon
 import Link from 'next/link';
 
 function StarRating({ rating }: { rating: number }) {
@@ -37,22 +38,23 @@ export default async function BookDetailPage({ params }: { params: { bookId: str
     );
   }
 
-  const blurbInput: GenerateBookBlurbInput = {
-    title: book.title,
-    genre: book.genre,
-    themes: book.themes,
-    targetAudience: book.targetAudience,
-    summary: book.summary,
-  };
+  // Removed AI Blurb generation logic
+  // const blurbInput: GenerateBookBlurbInput = {
+  //   title: book.title,
+  //   genre: book.genre,
+  //   themes: book.themes,
+  //   targetAudience: book.targetAudience,
+  //   summary: book.summary,
+  // };
 
-  let aiBlurb = "The promotional blurb is currently being crafted by our AI. Check back in a moment!";
-  try {
-    const blurbOutput = await generateBookBlurb(blurbInput);
-    aiBlurb = blurbOutput.blurb;
-  } catch (error) {
-    console.error("Error generating AI blurb:", error);
-    aiBlurb = "We encountered an issue generating the promotional blurb. Please enjoy the book's summary in the meantime.";
-  }
+  // let aiBlurb = "The promotional blurb is currently being crafted by our AI. Check back in a moment!";
+  // try {
+  //   const blurbOutput = await generateBookBlurb(blurbInput);
+  //   aiBlurb = blurbOutput.blurb;
+  // } catch (error) {
+  //   console.error("Error generating AI blurb:", error);
+  //   aiBlurb = "We encountered an issue generating the promotional blurb. Please enjoy the book's summary in the meantime.";
+  // }
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -77,6 +79,8 @@ export default async function BookDetailPage({ params }: { params: { bookId: str
               <Badge variant="default" className="bg-accent text-accent-foreground">{book.genre}</Badge>
             </div>
 
+            {/* Removed AI Generated Blurb Card */}
+            {/*
             <Card className="mb-6 bg-secondary/50">
               <CardHeader>
                 <CardTitle className="flex items-center text-xl font-headline text-primary">
@@ -87,6 +91,7 @@ export default async function BookDetailPage({ params }: { params: { bookId: str
                 <p className="text-foreground/90 italic leading-relaxed">{aiBlurb}</p>
               </CardContent>
             </Card>
+            */}
             
             <Separator className="my-6" />
 
