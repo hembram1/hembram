@@ -18,33 +18,33 @@ export default function HomePage() {
         <AuthorBio />
       </section>
 
-      <section id="currently-writing" className="mb-16"> {/* Increased mb for spacing */}
-        <div className="flex justify-center"> {/* Removed mb-6 */}
-          <div className="bg-card/80 backdrop-blur-lg shadow-md rounded-tl-2xl rounded-br-2xl py-2 px-5 flex items-center gap-3">
+      <section id="currently-writing" className="mb-16">
+        <div className="relative max-w-3xl mx-auto">
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 bg-card/80 backdrop-blur-lg shadow-md rounded-tl-2xl rounded-br-2xl py-2 px-5 flex items-center gap-3">
             <PenTool className="h-7 w-7 text-primary" />
             <h2 className="text-2xl font-headline font-semibold text-primary">
               Currently Crafting
             </h2>
           </div>
+          <Card className="max-w-3xl mx-auto shadow-xl rounded-2xl bg-card text-center p-6 sm:p-8 md:p-10 pt-12 sm:pt-14 md:pt-16">
+            <div className="relative z-10">
+              <p className="text-md sm:text-lg text-foreground/80 max-w-2xl mx-auto">
+                Hembram is currently weaving magic into a new tale:
+              </p>
+              <h3
+                className="mt-3 mb-2 text-2xl sm:text-3xl font-headline font-semibold text-primary min-h-[2.5em] sm:min-h-[1.5em]">
+                <TypingAnimation
+                  text={currentlyWritingBook}
+                  speed={100}
+                  cursorClassName="ml-1"
+                />
+              </h3>
+              <p className="text-sm text-foreground/70 max-w-xl mx-auto">
+                Stay tuned for updates on this exciting new adventure!
+              </p>
+            </div>
+          </Card>
         </div>
-        <Card className="max-w-3xl mx-auto overflow-hidden shadow-xl rounded-2xl p-6 sm:p-8 md:p-10 bg-card text-center">
-          <div className="relative z-10">
-            <p className="text-md sm:text-lg text-foreground/80 max-w-2xl mx-auto">
-              Hembram is currently weaving magic into a new tale:
-            </p>
-            <h3
-              className="mt-3 mb-2 text-2xl sm:text-3xl font-headline font-semibold text-primary min-h-[2.5em] sm:min-h-[1.5em]">
-              <TypingAnimation
-                text={currentlyWritingBook}
-                speed={100}
-                cursorClassName="ml-1"
-              />
-            </h3>
-            <p className="text-sm text-foreground/70 max-w-xl mx-auto">
-              Stay tuned for updates on this exciting new adventure!
-            </p>
-          </div>
-        </Card>
       </section>
 
       <section id="featured-books" className="mb-12">
