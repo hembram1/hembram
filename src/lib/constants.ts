@@ -1,5 +1,5 @@
 import type { Book } from './types';
-import { BookOpen, Users, Feather, Heart, Shield, Rocket, Microscope, Drama, Library, Mail } from 'lucide-react';
+import { BookOpen, Users, Feather, Heart, Shield, Rocket, Microscope, Drama, Library, Mail, Twitter, Instagram, Linkedin, Facebook } from 'lucide-react';
 
 export const author = {
   name: 'Hembram',
@@ -7,6 +7,11 @@ export const author = {
   contactEmail: 'contact@hembramwrites.com',
   authorImageUrl: 'https://placehold.co/250x250.png',
   authorImageHint: 'author portrait',
+  socialLinks: [
+    { platform: 'Twitter', url: 'https://twitter.com/hembramwrites', iconName: Twitter },
+    { platform: 'Instagram', url: 'https://instagram.com/hembramwrites', iconName: Instagram },
+    { platform: 'LinkedIn', url: 'https://linkedin.com/in/hembramwrites', iconName: Linkedin },
+  ]
 };
 
 export const books: Book[] = [

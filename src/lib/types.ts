@@ -9,19 +9,34 @@ export interface Review {
 export interface PurchaseLink {
   retailer: string;
   url: string;
-  iconName?: React.ElementType<React.SVGProps<SVGSVGElement>>; // Allow any LucideIcon
+  iconName?: React.ElementType<React.SVGProps<SVGSVGElement>>;
+}
+
+export interface SocialLink {
+  platform: string;
+  url: string;
+  iconName?: React.ElementType<React.SVGProps<SVGSVGElement>>;
+}
+
+export interface Author {
+  name: string;
+  bio: string;
+  contactEmail: string;
+  authorImageUrl?: string;
+  authorImageHint?: string;
+  socialLinks?: SocialLink[];
 }
 
 export interface Book {
   id: string;
   title: string;
   coverArtUrl: string;
-  coverArtHint: string; // For data-ai-hint
-  summary: string; // Short summary for AI blurb generation
-  description: string; // Longer description for the page
+  coverArtHint: string; 
+  summary: string; 
+  description: string; 
   genre: string;
   genreIconName?: React.ElementType<React.SVGProps<SVGSVGElement>>;
-  themes: string; // e.g., "love, loss, redemption"
+  themes: string; 
   targetAudience: string;
   reviews: Review[];
   purchaseLinks: PurchaseLink[];

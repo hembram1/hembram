@@ -1,7 +1,8 @@
 import { author } from "@/lib/constants";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Mail, Send } from "lucide-react";
+import { Mail, Send, Share2 } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 export default function ContactDisplay() {
   return (
@@ -33,6 +34,27 @@ export default function ContactDisplay() {
         <p className="mt-6 text-sm text-muted-foreground">
           Please allow a few business days for a response, especially during busy writing periods.
         </p>
+
+        {author.socialLinks && author.socialLinks.length > 0 && (
+          <>
+            <Separator className="my-8" />
+            <div className="mt-8">
+              <h3 className="text-2xl font-headline text-primary mb-4 flex items-center justify-center">
+                <Share2 className="mr-3 h-6 w-6" /> Follow Me
+              </h3>
+              <div className="flex flex-wrap justify-center gap-4">
+                {author.socialLinks.map((link) => (
+                  <Button key={link.platform} asChild variant="outline" className="border-accent text-accent hover:bg-accent hover:text-accent-foreground">
+                    <a href={link.url} target="_blank" rel="noopener noreferrer">
+                      {link.iconName && <link.iconName className="mr-2 h-5 w-5" />}
+                      {link.platform}
+                    </a>
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );
