@@ -19,7 +19,7 @@ export default function HomePage() {
       <section id="featured-books" className="mb-12">
         <Card className="max-w-3xl mx-auto mb-10 overflow-hidden shadow-xl rounded-2xl p-6 sm:p-8 md:p-10 relative bg-card text-center">
           <div
-            className="absolute -top-10 -left-10 w-32 h-32 sm:-top-12 sm:-left-12 md:-top-16 md:-left-16 sm:w-40 sm:h-40 md:w-52 md:h-52 bg-accent/10 rounded-full transform -rotate-12 pointer-events-none -z-0"
+            className="absolute -top-12 -right-12 md:-top-16 md:-right-20 w-40 h-40 md:w-52 md:h-52 bg-accent/10 rounded-full transform rotate-45 pointer-events-none -z-0"
             aria-hidden="true"
           />
           <div className="relative z-10">
