@@ -48,7 +48,7 @@ export default function AuthorBio() {
         {/* Text Section (Right) */}
         <div className="w-full md:w-2/3 relative">
           <div
-            className="absolute -top-12 -right-12 md:-top-16 md:-right-20 w-40 h-40 md:w-52 md:h-52 bg-accent/10 rounded-full transform rotate-45 pointer-events-none -z-0"
+            className="absolute -top-8 -right-8 w-32 h-32 sm:-top-10 sm:-right-10 sm:w-40 sm:h-40 md:-top-12 md:-right-12 md:w-48 md:h-48 lg:-top-14 lg:-right-14 bg-accent/10 rounded-full transform rotate-45 pointer-events-none -z-0"
             aria-hidden="true"
           />
           <div className="relative z-10">

@@ -19,8 +19,8 @@ export default function Navbar() {
             href="/"
             className="flex items-center gap-2 group transition-opacity hover:opacity-80"
           >
-            <BookMarked size={28} className="text-primary" />
-            <span className="text-2xl font-headline font-semibold text-primary">
+            <BookMarked className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
+            <span className="text-xl sm:text-2xl font-headline font-semibold text-primary">
               Hembram
             </span>
           </Link>

@@ -9,7 +9,7 @@ export default function BooksPage() {
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <Card className="max-w-3xl mx-auto mb-10 overflow-hidden shadow-xl rounded-2xl p-6 sm:p-8 md:p-10 relative bg-card text-center">
         <div
-          className="absolute -top-10 -right-10 w-32 h-32 sm:-top-12 sm:-right-12 md:-top-16 md:-right-16 sm:w-40 sm:h-40 md:w-52 md:h-52 bg-primary/5 rounded-full transform rotate-12 pointer-events-none -z-0"
+          className="absolute -top-8 -right-8 w-28 h-28 sm:-top-10 sm:-right-10 sm:w-36 sm:h-36 md:-top-12 md:-right-12 md:w-44 md:h-44 lg:-top-16 lg:-right-16 bg-primary/5 rounded-full transform rotate-12 pointer-events-none -z-0"
           aria-hidden="true"
         />
         <div className="relative z-10">

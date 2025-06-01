@@ -10,7 +10,7 @@ export default function ContactDisplay() {
     <div className="space-y-10">
       <Card className="max-w-2xl mx-auto shadow-xl overflow-hidden rounded-2xl relative bg-card">
         <div 
-          className="absolute -top-12 -right-16 w-40 h-40 bg-accent/10 rounded-full transform rotate-12 pointer-events-none -z-0" 
+          className="absolute -top-8 -right-10 w-32 h-32 sm:-top-10 sm:-right-12 sm:w-36 sm:h-36 md:-top-12 md:-right-16 md:w-40 md:h-40 bg-accent/10 rounded-full transform rotate-12 pointer-events-none -z-0" 
           aria-hidden="true" 
         />
         <div className="relative z-10">
@@ -30,7 +30,7 @@ export default function ContactDisplay() {
       {author.socialLinks && author.socialLinks.length > 0 && (
         <Card className="max-w-2xl mx-auto shadow-xl overflow-hidden rounded-2xl relative bg-card">
           <div 
-            className="absolute -bottom-12 -left-16 w-40 h-40 bg-primary/5 rounded-full transform -rotate-12 pointer-events-none -z-0" 
+            className="absolute -bottom-8 -left-10 w-32 h-32 sm:-bottom-10 sm:-left-12 sm:w-36 sm:h-36 md:-bottom-12 md:-left-16 md:w-40 md:h-40 bg-primary/5 rounded-full transform -rotate-12 pointer-events-none -z-0" 
             aria-hidden="true" 
           />
            <div className="relative z-10">
