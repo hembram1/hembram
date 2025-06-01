@@ -1,3 +1,4 @@
+
 import type { Book } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -48,7 +49,11 @@ export default function BookCard({ book }: BookCardProps) {
         )}
       </CardContent>
       <CardFooter className="p-4 border-t">
-        <Button asChild variant="default" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
+        <Button 
+          asChild 
+          variant="outline" 
+          className="w-full border-accent text-accent hover:bg-accent hover:text-accent-foreground"
+        >
           <Link href={`/books/${book.id}`}>
             View Details <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
