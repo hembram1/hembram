@@ -19,7 +19,7 @@ export default function HomePage() {
       </section>
 
       <section id="currently-writing" className="mb-16"> {/* Increased mb for spacing */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center"> {/* Removed mb-6 */}
           <div className="bg-card/80 backdrop-blur-lg shadow-md rounded-tl-2xl rounded-br-2xl py-2 px-5 flex items-center gap-3">
             <PenTool className="h-7 w-7 text-primary" />
             <h2 className="text-2xl font-headline font-semibold text-primary">
