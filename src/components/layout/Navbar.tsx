@@ -14,7 +14,7 @@ export default function Navbar() {
     <header className="bg-background/80 backdrop-blur-sm sticky top-0 z-50 py-3">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
         {/* Logo / Brand Name Pill */}
-        <div className="bg-card/80 backdrop-blur-sm shadow-md rounded-full py-1 sm:py-1.5 px-4 flex items-center">
+        <div className="bg-card/80 backdrop-blur-sm shadow-md rounded-tl-2xl rounded-br-2xl py-1 sm:py-1.5 px-4 flex items-center">
           <Link
             href="/"
             className="flex items-center gap-2 group transition-opacity hover:opacity-80"
@@ -27,7 +27,7 @@ export default function Navbar() {
         </div>
 
         {/* Navigation Links Pill */}
-        <nav className="bg-card/80 backdrop-blur-sm shadow-md rounded-full py-1.5 px-3 sm:py-2 sm:px-5 flex items-center space-x-1 sm:space-x-3">
+        <nav className="bg-card/80 backdrop-blur-sm shadow-md rounded-tl-2xl rounded-br-2xl py-1.5 px-3 sm:py-2 sm:px-5 flex items-center space-x-1 sm:space-x-3">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
