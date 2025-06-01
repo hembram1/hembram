@@ -17,7 +17,7 @@ export default function BookCard({ book }: BookCardProps) {
     : 0;
 
   return (
-    <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
+    <Card className="flex flex-col overflow-hidden shadow-xl transition-shadow duration-300 h-full rounded-2xl bg-card">
       <CardHeader className="p-0 relative">
         <Link href={`/books/${book.id}`} className="block">
           <Image
