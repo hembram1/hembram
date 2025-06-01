@@ -7,7 +7,7 @@ import ContactForm from "./ContactForm";
 
 export default function ContactDisplay() {
   return (
-    <div className="space-y-10"> {/* Increased spacing between cards slightly */}
+    <div className="space-y-10">
       <Card className="max-w-2xl mx-auto shadow-xl overflow-hidden rounded-2xl relative bg-card">
         <div 
           className="absolute -top-12 -right-16 w-40 h-40 bg-accent/10 rounded-full transform rotate-12 pointer-events-none -z-0" 
