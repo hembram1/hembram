@@ -5,8 +5,8 @@ import Footer from '@/components/layout/Footer';
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: 'Hembram',
-  description: 'The official website of author Hembram.',
+  title: 'Hembram - Official Author Website',
+  description: 'Explore the captivating literary worlds crafted by Hembram. Discover new releases, author insights, and more.',
 };
 
 export default function RootLayout({

@@ -8,7 +8,7 @@ export default function ContactPage() {
         <div className="flex justify-center items-center mb-3">
           <Mail className="h-10 w-10 text-primary" />
         </div>
-        <h1 className="text-4xl font-body font-medium text-primary inline-block pb-2 border-b-2 border-primary">Contact Hembram</h1>
+        <h1 className="text-4xl font-headline font-semibold text-primary inline-block pb-2 border-b-2 border-primary">Contact Hembram</h1>
         <p className="mt-4 text-lg text-foreground/80">
           Connect with the author, share your thoughts, or inquire about collaborations.
         </p>

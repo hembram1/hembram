@@ -10,7 +10,7 @@ export default function BooksPage() {
         <div className="flex justify-center items-center mb-3">
           <Library className="h-10 w-10 text-primary" />
         </div>
-        <h1 className="text-4xl font-body font-medium text-primary inline-block pb-2 border-b-2 border-primary">Discover Hembram&apos;s Worlds</h1>
+        <h1 className="text-4xl font-headline font-semibold text-primary inline-block pb-2 border-b-2 border-primary">Discover Hembram&apos;s Worlds</h1>
         <p className="mt-4 text-lg text-foreground/80 max-w-xl mx-auto">
           Journey through captivating stories and unforgettable characters, each a portal to a new adventure.
         </p>
