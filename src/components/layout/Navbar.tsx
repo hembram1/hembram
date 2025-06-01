@@ -13,10 +13,10 @@ export default function Navbar() {
   return (
     <>
       {/* Top Header (Logo + Desktop Nav) */}
-      <header className="bg-background/80 backdrop-blur-sm sticky top-0 z-50 py-3">
+      <header className="bg-background/80 backdrop-blur sticky top-0 z-50 py-3">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-row items-center justify-between gap-4">
           {/* Logo / Brand Name Pill */}
-          <div className="bg-card/80 backdrop-blur-sm shadow-md rounded-tl-2xl rounded-br-2xl py-1.5 px-4 flex items-center">
+          <div className="bg-card/80 backdrop-blur shadow-md rounded-tl-2xl rounded-br-2xl py-1.5 px-4 flex items-center">
             <Link
               href="/"
               className="flex items-center gap-2 group transition-opacity hover:opacity-80"
@@ -29,7 +29,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Navigation Links Pill */}
-          <nav className="bg-card/80 backdrop-blur-sm shadow-md rounded-tl-2xl rounded-br-2xl py-2 px-5 hidden md:flex items-center space-x-3">
+          <nav className="bg-card/80 backdrop-blur shadow-md rounded-tl-2xl rounded-br-2xl py-2 px-5 hidden md:flex items-center space-x-3">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
@@ -60,7 +60,7 @@ export default function Navbar() {
       </header>
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-sm border-t border-border shadow-[0_-2px_10px_rgba(0,0,0,0.08)] h-14">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur border-t border-border shadow-[0_-2px_10px_rgba(0,0,0,0.08)] h-14">
         <div className="mx-auto h-full flex justify-around items-center px-2">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
