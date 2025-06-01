@@ -79,7 +79,7 @@ export default async function BookDetailPage({ params }: { params: { bookId: str
 
             <div>
               <h3 className="text-2xl font-headline font-semibold text-primary mb-3 flex items-center">
-                <Users className="mr-3 h-6 w-6" /> Target Audience
+                <Users className="mr-3 h-6 w-6" /> This novel is for
               </h3>
               <p className="text-foreground/90 text-base md:text-lg">{book.targetAudience}</p>
             </div>
