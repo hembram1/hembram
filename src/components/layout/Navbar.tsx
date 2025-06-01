@@ -12,17 +12,19 @@ export default function Navbar() {
 
   return (
     <header className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-50 py-3">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-2">
-        {/* Logo / Brand Name */}
-        <Link
-          href="/"
-          className="flex items-center gap-2 group transition-opacity hover:opacity-80"
-        >
-          <BookMarked size={28} className="text-primary" />
-          <span className="text-2xl font-headline font-semibold text-primary">
-            Hembram
-          </span>
-        </Link>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+        {/* Logo / Brand Name Pill */}
+        <div className="bg-card/80 backdrop-blur-sm shadow-md rounded-full py-1 sm:py-1.5 px-4 flex items-center">
+          <Link
+            href="/"
+            className="flex items-center gap-2 group transition-opacity hover:opacity-80"
+          >
+            <BookMarked size={28} className="text-primary" />
+            <span className="text-2xl font-headline font-semibold text-primary">
+              Hembram
+            </span>
+          </Link>
+        </div>
 
         {/* Navigation Links Pill */}
         <nav className="bg-card/80 backdrop-blur-sm shadow-md rounded-full py-1.5 px-3 sm:py-2 sm:px-5 flex items-center space-x-1 sm:space-x-3">
