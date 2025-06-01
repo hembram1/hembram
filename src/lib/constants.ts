@@ -3,7 +3,7 @@ import { BookOpen, Users, Feather, Heart, Shield, Rocket, Microscope, Drama } fr
 
 export const author = {
   name: 'Hembram',
-  bio: "Hembram is a passionate storyteller, weaving intricate narratives that explore the depths of human emotion and the complexities of the world around us. With a unique voice and a keen eye for detail, Hembram's works transport readers to other realms, challenge perspectives, and linger in the imagination long after the final page is turned. Welcome to a world crafted from words.",
+  bio: "I’m Hembram — someone who doesn’t just live life but truly feels it… and through stories, I try to express those emotions to the world.\n\nWriting, for me, isn’t just an art — it’s a journey. Every word, every scene, every character is tied to something real inside me. I write the kind of stories that come not just from the mind, but straight from the heart. Whether it’s childhood memories or moments from youth, the colors of love or the silence of loneliness — I try to bring every emotion to life through my words.\n\nPeople often ask me, “Why do you write?” And my answer is simple — because some things can only be said through writing.\n\nIf you love stories filled with raw emotions — a bit of truth, a touch of dreams, some pain, and a little smile — then maybe my books will speak to your heart.\n\nThank you,\n– Hembram",
   contactEmail: 'contact@hembramwrites.com',
 };
 
