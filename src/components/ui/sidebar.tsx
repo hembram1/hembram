@@ -533,7 +533,7 @@ const SidebarMenuItem = React.forwardRef<
 SidebarMenuItem.displayName = "SidebarMenuItem"
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2.5 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-[width,height,padding,color,background-color] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:!size-9 group-data-[collapsible=icon]:!p-0 [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0",
+  "peer/menu-button flex w-full items-center gap-2.5 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-[width,height,padding,color,background-color] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:!size-9 group-data-[collapsible=icon]:!p-0 group-data-[collapsible=icon]:[&>svg]:mx-auto group-data-[collapsible=icon]:[&>span]:hidden [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -555,8 +555,8 @@ const sidebarMenuButtonVariants = cva(
 )
 
 const SidebarMenuButton = React.forwardRef<
-  HTMLButtonElement, // Changed to HTMLButtonElement for default
-  React.ComponentProps<"button"> & { // Changed to button props
+  HTMLButtonElement,
+  React.ComponentProps<"button"> & {
     asChild?: boolean
     isActive?: boolean
     tooltip?: string | React.ComponentProps<typeof TooltipContent>
@@ -570,29 +570,13 @@ const SidebarMenuButton = React.forwardRef<
       size = "default",
       tooltip,
       className,
-      children, // Added children
+      children,
       ...props
     },
     ref
   ) => {
-    const Comp = asChild ? Slot : "button" // Default to button
+    const Comp = asChild ? Slot : "button"
     const { isMobile, state } = useSidebar()
-
-    const buttonContent = (
-        <>
-          {/* This structure ensures icon and text are handled correctly when collapsed */}
-          {React.Children.map(children, child => {
-            if (React.isValidElement(child) && typeof child.type !== 'string' && (child.type as any).displayName?.includes('Icon')) {
-              return React.cloneElement(child as React.ReactElement<any>, { className: cn("group-data-[collapsible=icon]:mx-auto", (child.props as any).className) });
-            }
-            if (typeof child === 'string' || (React.isValidElement(child) && child.type === 'span')) {
-              return <span className="group-data-[collapsible=icon]:hidden truncate">{child}</span>;
-            }
-            return child;
-          })}
-        </>
-      );
-
 
     const button = (
       <Comp
@@ -600,10 +584,10 @@ const SidebarMenuButton = React.forwardRef<
         data-sidebar="menu-button"
         data-size={size}
         data-active={isActive}
-        className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
+        className={cn(sidebarMenuButtonVariants({ variant, size, className }))}
         {...props}
       >
-        {buttonContent}
+        {children}
       </Comp>
     )
 
@@ -626,7 +610,7 @@ const SidebarMenuButton = React.forwardRef<
           side="right"
           align="center"
           sideOffset={6}
-          className={cn(tooltipProps.className)} // Allow className override for TooltipContent
+          className={cn(tooltipProps.className)} 
           hidden={state !== "collapsed" || isMobile}
           {...tooltipProps}
         />
@@ -651,11 +635,7 @@ const SidebarMenuAction = React.forwardRef<
       data-sidebar="menu-action"
       className={cn(
         "absolute right-1.5 top-1/2 -translate-y-1/2 flex aspect-square w-6 items-center justify-center rounded-md p-0 text-sidebar-foreground/70 outline-none ring-sidebar-ring transition-opacity hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
-        // Increases the hit area of the button on mobile.
         "after:absolute after:-inset-2 after:md:hidden",
-        // "peer-data-[size=sm]/menu-button:top-1",
-        // "peer-data-[size=default]/menu-button:top-1.5",
-        // "peer-data-[size=lg]/menu-button:top-2.5",
         "group-data-[collapsible=icon]:hidden",
         showOnHover &&
           "opacity-0 group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-sidebar-accent-foreground",
@@ -677,9 +657,6 @@ const SidebarMenuBadge = React.forwardRef<
     className={cn(
       "absolute right-2 top-1/2 -translate-y-1/2 flex h-5 min-w-5 items-center justify-center rounded-md px-1.5 text-xs font-medium tabular-nums text-sidebar-foreground select-none pointer-events-none",
       "peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[active=true]/menu-button:text-sidebar-accent-foreground",
-      // "peer-data-[size=sm]/menu-button:top-1",
-      // "peer-data-[size=default]/menu-button:top-1.5",
-      // "peer-data-[size=lg]/menu-button:top-2.5",
       "group-data-[collapsible=icon]:hidden",
       className
     )}
@@ -693,8 +670,7 @@ const SidebarMenuSkeleton = React.forwardRef<
   React.ComponentProps<"div"> & {
     showIcon?: boolean
   }
->(({ className, showIcon = true, ...props }, ref) => { // Default showIcon to true
-  // Random width between 50 to 90%.
+>(({ className, showIcon = true, ...props }, ref) => { 
   const width = React.useMemo(() => {
     return `${Math.floor(Math.random() * 40) + 50}%`
   }, [])
@@ -734,7 +710,7 @@ const SidebarMenuSub = React.forwardRef<
     ref={ref}
     data-sidebar="menu-sub"
     className={cn(
-      "ml-[calc(theme(spacing[2.5])_+_theme(spacing.5))] mr-1 flex min-w-0 translate-x-px flex-col gap-0.5 border-l border-sidebar-border pl-2.5 py-1", // Adjusted margins and paddings
+      "ml-[calc(theme(spacing[2.5])_+_theme(spacing.5))] mr-1 flex min-w-0 translate-x-px flex-col gap-0.5 border-l border-sidebar-border pl-2.5 py-1", 
       "group-data-[collapsible=icon]:hidden",
       className
     )}
@@ -750,14 +726,14 @@ const SidebarMenuSubItem = React.forwardRef<
 SidebarMenuSubItem.displayName = "SidebarMenuSubItem"
 
 const SidebarMenuSubButton = React.forwardRef<
-  HTMLAnchorElement, // Changed to HTMLAnchorElement for default
-  React.ComponentProps<"a"> & { // Changed to anchor props
+  HTMLAnchorElement, 
+  React.ComponentProps<"a"> & { 
     asChild?: boolean
-    size?: "sm" | "default" // Adjusted sizes
+    size?: "sm" | "default" 
     isActive?: boolean
   }
 >(({ asChild = false, size = "default", isActive, className, ...props }, ref) => {
-  const Comp = asChild ? Slot : "a" // Default to anchor
+  const Comp = asChild ? Slot : "a" 
 
   return (
     <Comp
