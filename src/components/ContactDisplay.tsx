@@ -1,7 +1,7 @@
 
 import { author } from "@/lib/constants";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Share2, MessageSquare } from "lucide-react";
+import { AtSign, MessageSquare } from "lucide-react"; // Changed Share2 to AtSign
 import { Button } from "@/components/ui/button";
 import ContactForm from "./ContactForm";
 
@@ -24,7 +24,7 @@ export default function ContactDisplay() {
       {author.socialLinks && author.socialLinks.length > 0 && (
         <Card className="max-w-2xl mx-auto shadow-xl">
           <CardHeader className="text-center bg-secondary p-6 rounded-t-lg">
-            <Share2 className="h-12 w-12 text-primary mx-auto mb-3" />
+            <AtSign className="h-12 w-12 text-primary mx-auto mb-3" /> {/* Changed Share2 to AtSign */}
             <CardTitle className="text-3xl font-headline text-primary">Follow Me</CardTitle>
             <CardDescription className="text-md text-foreground/80 mt-1">
               Connect with {author.name} on social media.
