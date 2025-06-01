@@ -14,7 +14,7 @@ export default function AuthorBio() {
       <div className="flex flex-col md:flex-row items-start gap-6 md:gap-8">
         {/* Image Section (Left) */}
         <div className="w-full md:w-1/3 flex-shrink-0 flex flex-col items-center md:items-start">
-          <div className="relative aspect-square w-full max-w-[200px] md:max-w-full mx-auto md:mx-0 rounded-lg overflow-hidden shadow-md">
+          <div className="relative aspect-square w-full max-w-[200px] md:max-w-full mx-auto md:mx-0 rounded-tl-2xl rounded-br-2xl overflow-hidden shadow-md">
             <Image
               src={author.authorImageUrl || 'https://placehold.co/250x250.png'}
               alt={`Portrait of ${author.name}`}
@@ -48,7 +48,7 @@ export default function AuthorBio() {
         {/* Text Section (Right) */}
         <div className="w-full md:w-2/3 relative">
           <div
-            className="absolute -top-8 -right-8 w-32 h-32 sm:-top-10 sm:-right-10 sm:w-40 sm:h-40 md:-top-12 md:-right-12 md:w-48 md:h-48 lg:-top-14 lg:-right-14 bg-accent/10 rounded-full transform rotate-45 pointer-events-none -z-0"
+            className="absolute -top-8 -right-8 w-28 h-28 sm:-top-10 sm:-right-10 sm:w-36 sm:h-36 md:-top-12 md:-right-12 md:w-44 md:h-44 lg:-top-16 lg:-right-16 bg-accent/10 rounded-full transform rotate-12 pointer-events-none -z-0"
             aria-hidden="true"
           />
           <div className="relative z-10">
