@@ -1,10 +1,12 @@
 import type { Book } from './types';
-import { BookOpen, Users, Feather, Heart, Shield, Rocket, Microscope, Drama } from 'lucide-react';
+import { BookOpen, Users, Feather, Heart, Shield, Rocket, Microscope, Drama, Library, Mail } from 'lucide-react';
 
 export const author = {
   name: 'Hembram',
   bio: "I’m Hembram — someone who doesn’t just live life but truly feels it… and through stories, I try to express those emotions to the world.\n\nWriting, for me, isn’t just an art — it’s a journey. Every word, every scene, every character is tied to something real inside me. I write the kind of stories that come not just from the mind, but straight from the heart. Whether it’s childhood memories or moments from youth, the colors of love or the silence of loneliness — I try to bring every emotion to life through my words.\n\nPeople often ask me, “Why do you write?” And my answer is simple — because some things can only be said through writing.\n\nIf you love stories filled with raw emotions — a bit of truth, a touch of dreams, some pain, and a little smile — then maybe my books will speak to your heart.\n\nThank you,\n– Hembram",
   contactEmail: 'contact@hembramwrites.com',
+  authorImageUrl: 'https://placehold.co/250x250.png',
+  authorImageHint: 'author portrait',
 };
 
 export const books: Book[] = [
@@ -75,4 +77,3 @@ export const navLinks = [
   { href: '/books', label: 'Books' },
   { href: '/contact', label: 'Contact' },
 ];
-
