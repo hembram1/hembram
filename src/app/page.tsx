@@ -18,20 +18,18 @@ export default function HomePage() {
         <AuthorBio />
       </section>
 
-      <section id="currently-writing" className="mb-12">
-        <Card className="max-w-3xl mx-auto overflow-hidden shadow-xl rounded-2xl p-6 sm:p-8 md:p-10 relative bg-card text-center">
-          <div
-            className="absolute -top-8 -right-8 w-28 h-28 sm:-top-10 sm:-right-10 sm:w-36 sm:h-36 md:-top-12 md:-right-12 md:w-44 md:h-44 lg:-top-14 lg:-right-14 bg-primary/5 rounded-full transform rotate-12 pointer-events-none -z-0"
-            aria-hidden="true"
-          />
-          <div className="relative z-10">
-            <div className="flex justify-center items-center mb-4">
-              <PenTool className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
-            </div>
-            <h2 className="inline-block text-3xl font-headline font-semibold text-primary pb-3 border-b-2 border-primary/70">
+      <section id="currently-writing" className="mb-16"> {/* Increased mb for spacing */}
+        <div className="flex justify-center mb-6">
+          <div className="bg-card/80 backdrop-blur-lg shadow-md rounded-tl-2xl rounded-br-2xl py-2 px-5 flex items-center gap-3">
+            <PenTool className="h-7 w-7 text-primary" />
+            <h2 className="text-2xl font-headline font-semibold text-primary">
               Currently Crafting
             </h2>
-            <p className="mt-4 text-md sm:text-lg text-foreground/80 max-w-2xl mx-auto">
+          </div>
+        </div>
+        <Card className="max-w-3xl mx-auto overflow-hidden shadow-xl rounded-2xl p-6 sm:p-8 md:p-10 bg-card text-center">
+          <div className="relative z-10">
+            <p className="text-md sm:text-lg text-foreground/80 max-w-2xl mx-auto">
               Hembram is currently weaving magic into a new tale:
             </p>
             <h3
