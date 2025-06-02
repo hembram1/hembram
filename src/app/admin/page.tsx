@@ -1,16 +1,22 @@
+// src/app/admin/page.tsx
+'use client'; // This page might not strictly need 'use client' if layout handles auth,
+              // but good to keep if any client-side logic is added.
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LayoutDashboard, Settings, User, BookOpen, Link2 } from "lucide-react";
+import { LayoutDashboard, Settings, User, BookOpen, Link2, PenTool } from "lucide-react";
 import Link from "next/link";
 
 const adminSections = [
   { href: '/admin/settings', title: 'Site Settings', description: 'Manage header logo and site title.', icon: Settings },
   { href: '/admin/author-bio', title: 'Author Bio', description: 'Edit the author biography section.', icon: User },
-  { href: '/admin/books', title: 'Books', description: 'Add, edit, or remove books and featured books.', icon: BookOpen },
+  { href: '/admin/books', title: 'Books', description: 'Add, edit, or remove books.', icon: BookOpen },
   { href: '/admin/social-links', title: 'Social Links', description: 'Update contact and social media links.', icon: Link2 },
+  { href: '/admin/currently-crafting', title: 'Currently Crafting', description: 'Set the "currently writing" book title.', icon: PenTool },
 ];
 
 export default function AdminDashboardPage() {
+  // The AdminLayout now handles authentication checks and redirection.
+  // This page will only be rendered if the user is authenticated.
   return (
     <div className="space-y-8">
       <Card className="shadow-lg">
@@ -25,7 +31,8 @@ export default function AdminDashboardPage() {
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            From here, you will be able to manage various aspects of your website once the backend functionality is implemented.
+            From here, you can manage various aspects of your website.
+            All changes are saved to your browser's local storage.
           </p>
         </CardContent>
       </Card>
