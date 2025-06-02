@@ -1,3 +1,4 @@
+
 // src/app/admin/login/page.tsx
 'use client';
 
@@ -19,7 +20,7 @@ import { LogIn, ShieldAlert } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { login, isAuthenticated } from '@/lib/authUtils'; // Removed getAdminContactEmail as it's no longer used here
+import { login, isAuthenticated } from '@/lib/authUtils';
 import Link from 'next/link';
 
 const loginSchema = z.object({
@@ -60,7 +61,7 @@ export default function AdminLoginPage() {
         title: 'Login Successful!',
         description: 'Redirecting to admin dashboard...',
       });
-      router.push('/admin'); // Use push to allow back navigation if needed, or replace
+      router.push('/admin');
     } else {
       toast({
         title: 'Login Failed',
@@ -89,11 +90,13 @@ export default function AdminLoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-md shadow-2xl">
-        <CardHeader className="text-center">
-          <ShieldAlert className="mx-auto h-12 w-12 text-primary mb-3" />
-          <CardTitle className="text-3xl font-headline">Admin Panel Login</CardTitle>
-          <CardDescription className="text-md">
-            Access to this area is restricted. Please authenticate.
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <ShieldAlert className="h-8 w-8 text-primary" />
+            <CardTitle className="text-3xl font-headline">Admin Login</CardTitle>
+          </div>
+          <CardDescription className="text-md pt-1">
+            Please enter your credentials to access the admin panel.
           </CardDescription>
         </CardHeader>
         <CardContent>
