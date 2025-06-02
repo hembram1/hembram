@@ -77,12 +77,12 @@ export default function AdminSettingsPage() {
     }
   }
   
-  if (isLoading) { // Check isLoading instead of currentAuthor
+  if (isLoading) { 
     return (
-      <Card className="shadow-lg">
-        <CardHeader><CardTitle>Loading site settings...</CardTitle></CardHeader>
-        <CardContent><p>Please wait...</p></CardContent>
-      </Card>
+      <div className="flex flex-col items-center justify-center py-16">
+        <span className="text-7xl font-headline font-bold text-primary animate-pulse">H.</span>
+        <p className="mt-3 text-md text-muted-foreground">Loading site settings...</p>
+      </div>
     );
   }
 

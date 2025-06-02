@@ -74,15 +74,9 @@ export default function AdminLoginPage() {
 
   if (!authCheckComplete) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <Card className="w-full max-w-md shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-center text-2xl font-headline">Loading...</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-center text-muted-foreground">Checking authentication status...</p>
-          </CardContent>
-        </Card>
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
+        <span className="text-8xl font-headline font-bold text-primary animate-pulse">H.</span>
+        <p className="mt-4 text-lg text-muted-foreground">Checking Authentication...</p>
       </div>
     );
   }

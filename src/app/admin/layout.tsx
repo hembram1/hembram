@@ -70,11 +70,9 @@ function AdminContent({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-md shadow-lg">
-          <CardHeader><CardTitle className="text-center">Loading Admin Area...</CardTitle></CardHeader>
-          <CardContent><p className="text-center text-muted-foreground">Please wait...</p></CardContent>
-        </Card>
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
+        <span className="text-8xl font-headline font-bold text-primary animate-pulse">H.</span>
+        <p className="mt-4 text-lg text-muted-foreground">Loading Admin Area...</p>
       </div>
     );
   }
@@ -83,7 +81,12 @@ function AdminContent({ children }: { children: React.ReactNode }) {
     // Still loading or redirecting, show minimal content or null
     // This case should be covered by the redirect in useEffect,
     // but as a fallback, prevent rendering admin UI if not authenticated.
-    return null; 
+     return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
+        <span className="text-8xl font-headline font-bold text-primary animate-pulse">H.</span>
+        <p className="mt-4 text-lg text-muted-foreground">Redirecting...</p>
+      </div>
+    );
   }
   
   if (!isAuth && pathname === '/admin/login') {
@@ -95,10 +98,9 @@ function AdminContent({ children }: { children: React.ReactNode }) {
     // Authenticated user on login page, redirect handled by useEffect.
     // Render nothing here to avoid flicker, or a loading indicator.
      return (
-      <div className="flex min-h-screen items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-md shadow-lg">
-          <CardHeader><CardTitle className="text-center">Redirecting...</CardTitle></CardHeader>
-        </Card>
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
+        <span className="text-8xl font-headline font-bold text-primary animate-pulse">H.</span>
+        <p className="mt-4 text-lg text-muted-foreground">Redirecting to Dashboard...</p>
       </div>
     );
   }
@@ -163,8 +165,12 @@ function AdminContent({ children }: { children: React.ReactNode }) {
   }
   
   // Fallback for any unhandled state, though useEffect should manage redirects.
-  // This could be a loading indicator or null if redirects are expected to handle it.
-  return null;
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
+      <span className="text-8xl font-headline font-bold text-primary animate-pulse">H.</span>
+      <p className="mt-4 text-lg text-muted-foreground">An unexpected state occurred.</p>
+    </div>
+  );
 }
 
 
@@ -177,10 +183,9 @@ export default function AdminLayout({
   // that could suspend during rendering. This is good practice.
   return (
     <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-md shadow-lg">
-          <CardHeader><CardTitle className="text-center">Loading...</CardTitle></CardHeader>
-        </Card>
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
+        <span className="text-8xl font-headline font-bold text-primary animate-pulse">H.</span>
+        <p className="mt-4 text-lg text-muted-foreground">Loading page...</p>
       </div>
     }>
       <AdminContent>{children}</AdminContent>

@@ -85,10 +85,10 @@ export default function AdminAuthorBioPage() {
   
   if (isLoading) {
     return (
-      <Card className="shadow-lg">
-        <CardHeader><CardTitle>Loading author data...</CardTitle></CardHeader>
-        <CardContent><p>Please wait...</p></CardContent>
-      </Card>
+      <div className="flex flex-col items-center justify-center py-16">
+        <span className="text-7xl font-headline font-bold text-primary animate-pulse">H.</span>
+        <p className="mt-3 text-md text-muted-foreground">Loading author data...</p>
+      </div>
     );
   }
 
