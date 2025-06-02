@@ -255,6 +255,67 @@ export function deleteBookFromStorage(bookId: string): Book[] {
   return updatedBooks;
 }
 
+// Manage Purchase Links for a specific book
+export function addPurchaseLinkToBookInStorage(bookId: string, newLink: Omit<PurchaseLink, 'iconName'>): Book | undefined {
+  const books = getBooksData();
+  let bookToReturn: Book | undefined = undefined;
+
+  const updatedBooks = books.map(book => {
+    if (book.id === bookId) {
+      const linkToAdd: PurchaseLink = { ...newLink, iconName: undefined };
+
+      // Attempt to find a default icon for this retailer from constants
+      const defaultBookDefinition = defaultBooksConst.find(db => 
+        db.id === bookId || db.genre.toLowerCase() === book.genre.toLowerCase()
+      );
+      if (defaultBookDefinition) {
+        const defaultPurchaseLink = defaultBookDefinition.purchaseLinks.find(dpl => dpl.retailer.toLowerCase() === newLink.retailer.toLowerCase());
+        if (defaultPurchaseLink) {
+          linkToAdd.iconName = defaultPurchaseLink.iconName;
+        }
+      }
+      
+      // Ensure purchaseLinks array exists and add the new link
+      book.purchaseLinks = [...(book.purchaseLinks || []), linkToAdd];
+      bookToReturn = book; // The book object is modified directly
+      return book; // Return the modified book
+    }
+    return book; // Return other books as they are
+  });
+
+  if (bookToReturn) {
+    saveBooksData(updatedBooks); // Save the entire updated books array
+    // Re-fetch the specific book to ensure it has all transformations applied by getBooksData
+    return getBooksData().find(b => b.id === bookId);
+  }
+  console.warn(`Book with ID ${bookId} not found, could not add purchase link.`);
+  return undefined;
+}
+
+export function deletePurchaseLinkFromBookInStorage(bookId: string, retailerToDelete: string): Book | undefined {
+  const books = getBooksData();
+  let bookToReturn: Book | undefined = undefined;
+
+  const updatedBooks = books.map(book => {
+    if (book.id === bookId) {
+      // Ensure purchaseLinks array exists and filter out the link
+      book.purchaseLinks = (book.purchaseLinks || []).filter(link => link.retailer !== retailerToDelete);
+      bookToReturn = book; // The book object is modified directly
+      return book; // Return the modified book
+    }
+    return book; // Return other books as they are
+  });
+
+  if (bookToReturn) {
+    saveBooksData(updatedBooks); // Save the entire updated books array
+    // Re-fetch the specific book to ensure it has all transformations applied by getBooksData
+    return getBooksData().find(b => b.id === bookId);
+  }
+  console.warn(`Book with ID ${bookId} not found, could not delete purchase link.`);
+  return undefined;
+}
+
+
 // Initialize if not present
 if (typeof window !== 'undefined') {
   if (!localStorage.getItem(AUTHOR_KEY)) {
@@ -268,6 +329,4 @@ if (typeof window !== 'undefined') {
     saveBooksData(defaultBooksConst);
   }
 }
-
-
     
