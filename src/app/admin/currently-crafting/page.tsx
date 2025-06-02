@@ -17,11 +17,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PenTool, Save } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
-import { updateCurrentlyCraftingTitle } from '@/app/actions/admin/craftingActions';
 import { useState, useEffect } from 'react';
 import { getCurrentlyCraftingTitleFromStorage, saveCurrentlyCraftingTitleToStorage } from '@/lib/localStorageUtils'; // Direct use for client component
-import type { Author } from '@/lib/types';
-
 
 const currentlyCraftingSchema = z.object({
   title: z.string().max(100, { message: 'Title must be 100 characters or less.' }).optional(),
@@ -32,18 +29,21 @@ export type CurrentlyCraftingFormValues = z.infer<typeof currentlyCraftingSchema
 export default function AdminCurrentlyCraftingPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentTitle, setCurrentTitle] = useState('');
+  // Removed setCurrentTitle as form state will manage it
+  // const [currentTitle, setCurrentTitle] = useState('');
 
   const form = useForm<CurrentlyCraftingFormValues>({
     resolver: zodResolver(currentlyCraftingSchema),
-    // Default values will be set by useEffect
+    defaultValues: {
+      title: '', // Initialize as controlled
+    },
   });
 
   useEffect(() => {
     const titleFromStorage = getCurrentlyCraftingTitleFromStorage();
-    setCurrentTitle(titleFromStorage);
+    // setCurrentTitle(titleFromStorage); // No longer needed
     form.reset({
-      title: titleFromStorage || '',
+      title: titleFromStorage || '', // Ensure it's at least an empty string
     });
   }, [form]);
 
@@ -53,7 +53,7 @@ export default function AdminCurrentlyCraftingPage() {
       // Direct client-side update to localStorage
       saveCurrentlyCraftingTitleToStorage(values.title || ''); // Dispatches 'authorDataUpdated'
 
-      setCurrentTitle(values.title || ''); // Update local state
+      // setCurrentTitle(values.title || ''); // Form state already has this
 
       toast({
         title: 'Currently Crafting Title Updated!',

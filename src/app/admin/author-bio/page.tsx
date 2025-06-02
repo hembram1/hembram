@@ -18,7 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Save } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
-import { updateAuthorBio } from '@/app/actions/admin/authorActions';
+// import { updateAuthorBio } from '@/app/actions/admin/authorActions'; // Not using server action for direct localStorage
 import { useState, useEffect } from 'react';
 import { getAuthorData, saveAuthorData } from '@/lib/localStorageUtils'; // Direct use for this client component
 import type { Author } from '@/lib/types';
@@ -33,20 +33,23 @@ export type AuthorBioFormValues = z.infer<typeof authorBioSchema>;
 export default function AdminAuthorBioPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentAuthor, setCurrentAuthor] = useState<Author | null>(null);
+  const [isLoading, setIsLoading] = useState(true); // For initial load
 
   const form = useForm<AuthorBioFormValues>({
     resolver: zodResolver(authorBioSchema),
-    // Default values will be set by useEffect
+    defaultValues: {
+      name: '', // Initialize as controlled
+      bio: '',   // Initialize as controlled
+    },
   });
 
   useEffect(() => {
     const authorData = getAuthorData();
-    setCurrentAuthor(authorData);
     form.reset({
       name: authorData.name || '',
       bio: authorData.bio || '',
     });
+    setIsLoading(false);
   }, [form]);
 
   async function onSubmit(values: AuthorBioFormValues) {
@@ -58,7 +61,7 @@ export default function AdminAuthorBioPage() {
       authorData.bio = values.bio;
       saveAuthorData(authorData); // This will also dispatch 'authorDataUpdated' event
 
-      setCurrentAuthor(authorData); // Update local state for immediate reflection if needed
+      // No need to setCurrentAuthor, form state and event listener handle updates
 
       toast({
         title: 'Author Bio Updated!',
@@ -76,7 +79,7 @@ export default function AdminAuthorBioPage() {
     }
   }
   
-  if (!currentAuthor) {
+  if (isLoading) {
     return (
       <Card className="shadow-lg">
         <CardHeader><CardTitle>Loading author data...</CardTitle></CardHeader>
@@ -84,7 +87,6 @@ export default function AdminAuthorBioPage() {
       </Card>
     );
   }
-
 
   return (
     <Card className="shadow-lg">

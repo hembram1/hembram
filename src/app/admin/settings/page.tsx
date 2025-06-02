@@ -19,7 +19,7 @@ import { Settings, Save } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
 import { getAuthorData, updateSiteSettingsInStorage } from '@/lib/localStorageUtils';
-import type { Author } from '@/lib/types';
+// import type { Author } from '@/lib/types'; // Not strictly needed if not storing full author object in state
 
 const siteSettingsSchema = z.object({
   siteTitle: z.string().min(3, { message: 'Site title must be at least 3 characters.' }),
@@ -31,20 +31,25 @@ export type SiteSettingsFormValues = z.infer<typeof siteSettingsSchema>;
 export default function AdminSettingsPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentAuthor, setCurrentAuthor] = useState<Author | null>(null);
+  const [isLoading, setIsLoading] = useState(true); // For initial load
+  // const [currentAuthor, setCurrentAuthor] = useState<Author | null>(null); // Can be removed if not directly used
 
   const form = useForm<SiteSettingsFormValues>({
     resolver: zodResolver(siteSettingsSchema),
-    // Default values will be set by useEffect
+    defaultValues: {
+      siteTitle: '', // Initialize as controlled
+      logoUrl: '',   // Initialize as controlled
+    },
   });
 
   useEffect(() => {
     const authorData = getAuthorData();
-    setCurrentAuthor(authorData);
+    // setCurrentAuthor(authorData); // Can be removed
     form.reset({
       siteTitle: authorData.siteTitle || 'Hembram - Official Author Website',
       logoUrl: authorData.logoUrl || '',
     });
+    setIsLoading(false);
   }, [form]);
 
   async function onSubmit(values: SiteSettingsFormValues) {
@@ -52,9 +57,10 @@ export default function AdminSettingsPage() {
     try {
       updateSiteSettingsInStorage(values.siteTitle, values.logoUrl); // This dispatches 'authorDataUpdated'
       
-      // Update local state if needed, though event listener in Navbar should handle it
-      const updatedAuthorData = getAuthorData();
-      setCurrentAuthor(updatedAuthorData);
+      // No need to setCurrentAuthor or getAuthorData here for local state,
+      // as Navbar listens to 'authorDataUpdated' event.
+      // const updatedAuthorData = getAuthorData();
+      // setCurrentAuthor(updatedAuthorData);
 
       toast({
         title: 'Site Settings Updated!',
@@ -71,7 +77,7 @@ export default function AdminSettingsPage() {
     }
   }
   
-  if (!currentAuthor) {
+  if (isLoading) { // Check isLoading instead of currentAuthor
     return (
       <Card className="shadow-lg">
         <CardHeader><CardTitle>Loading site settings...</CardTitle></CardHeader>
