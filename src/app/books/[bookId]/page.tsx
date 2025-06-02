@@ -6,21 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { AlertCircle, BookOpenCheck, ExternalLink, MessageSquare, ShoppingCart, Star, Users, ThumbsUp } from 'lucide-react';
+import { AlertCircle, BookOpenCheck, ExternalLink, ShoppingCart, Users, ThumbsUp } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { getBooksData, getAuthorData } from '@/lib/localStorageUtils';
 import { useParams } from 'next/navigation'; // For client components
-
-function StarRating({ rating }: { rating: number }) {
-  return (
-    <div className="flex">
-      {[...Array(5)].map((_, i) => (
-        <Star key={i} className={`h-5 w-5 ${i < rating ? 'text-amber-500 fill-amber-500' : 'text-muted-foreground'}`} />
-      ))}
-    </div>
-  );
-}
 
 export default function BookDetailPage() {
   const params = useParams();
@@ -156,33 +146,6 @@ export default function BookDetailPage() {
               </div>
             ) : (
               <p className="text-muted-foreground text-base md:text-lg">Purchase links are not available at this moment.</p>
-            )}
-          </div>
-
-          <Separator className="my-8" />
-
-          <div>
-            <h2 className="text-3xl font-headline font-semibold text-primary mb-8 flex items-center">
-              <MessageSquare className="mr-3 h-7 w-7" /> Reader Reviews
-            </h2>
-            {book.reviews.length > 0 ? (
-              <div className="space-y-8">
-                {book.reviews.map((review, index) => (
-                  <Card key={index} className="bg-background shadow-md rounded-lg">
-                    <CardHeader>
-                      <div className="flex justify-between items-start">
-                        <CardTitle className="text-xl font-headline text-primary">{review.reviewer}</CardTitle>
-                        <StarRating rating={review.rating} />
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground italic text-base leading-relaxed">&ldquo;{review.text}&rdquo;</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <p className="text-muted-foreground text-base md:text-lg">No reviews yet. Be the first to share your thoughts!</p>
             )}
           </div>
         </div>

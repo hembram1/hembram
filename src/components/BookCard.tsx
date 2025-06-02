@@ -7,17 +7,13 @@ import Link from 'next/link';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Star } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface BookCardProps {
   book: Book;
 }
 
 export default function BookCard({ book }: BookCardProps) {
-  const averageRating = book.reviews.length > 0
-    ? book.reviews.reduce((acc, review) => acc + review.rating, 0) / book.reviews.length
-    : 0;
-
   const GenreIcon = book.genreIconName; // Handle potential undefined icon from localStorage data
 
   return (
@@ -50,12 +46,6 @@ export default function BookCard({ book }: BookCardProps) {
           <p className="text-sm text-muted-foreground line-clamp-3 mb-2">
             {book.summary}
           </p>
-          {averageRating > 0 && (
-            <div className="flex items-center text-sm text-amber-500 mb-2">
-              <Star className="h-4 w-4 fill-amber-500 mr-1" />
-              {averageRating.toFixed(1)} ({book.reviews.length} reviews)
-            </div>
-          )}
         </CardContent>
         <CardFooter className="p-4 border-t">
           <Button 
