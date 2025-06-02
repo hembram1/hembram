@@ -31,13 +31,10 @@ export const books: Book[] = [
     genreIconName: Feather,
     themes: 'good vs evil, magic, destiny, courage',
     targetAudience: 'Young adults, fantasy lovers',
-    reviews: [
-      { reviewer: 'Lit Monthly', text: 'A breathtaking debut, Hembram is a new voice to watch in fantasy.', rating: 5 },
-      { reviewer: 'Reader Digest', text: 'Compelling characters and a richly imagined world.', rating: 4 },
-    ],
+    reviews: [], // Reviews removed
     purchaseLinks: [
-      { retailer: 'Amazon', url: '#', iconName: BookOpen },
-      { retailer: 'Local Bookstore', url: '#', iconName: BookOpen },
+      { retailer: 'Amazon', url: 'https://www.amazon.com/s?k=The+Crimson+River+Hembram', iconName: BookOpen },
+      // { retailer: 'Local Bookstore', url: '#', iconName: BookOpen }, // Other links can be kept for data completeness but won't show if Amazon link is prioritized
     ],
   },
   {
@@ -51,13 +48,11 @@ export const books: Book[] = [
     genreIconName: Rocket,
     themes: 'dystopia, technology, rebellion, truth',
     targetAudience: 'Sci-fi enthusiasts, fans of dystopian stories',
-    reviews: [
-      { reviewer: 'Sci-Fi Chronicle', text: 'A thought-provoking tale that resonates with current anxieties.', rating: 4 },
-      { reviewer: 'TechReads', text: 'Intriguing plot with a chillingly plausible future.', rating: 5 },
-    ],
+    reviews: [], // Reviews removed
     purchaseLinks: [
-      { retailer: 'E-Reads Central', url: '#', iconName: BookOpen },
-      { retailer: 'Galaxy Books', url: '#', iconName: BookOpen },
+      { retailer: 'Amazon', url: 'https://www.amazon.com/s?k=Echoes+of+Tomorrow+Hembram', iconName: BookOpen },
+      // { retailer: 'E-Reads Central', url: '#', iconName: BookOpen },
+      // { retailer: 'Galaxy Books', url: '#', iconName: BookOpen },
     ],
   },
   {
@@ -71,13 +66,10 @@ export const books: Book[] = [
     genreIconName: Heart,
     themes: 'love, duty, clan rivalry, Scotland',
     targetAudience: 'Readers of historical romance, Scottish history buffs',
-    reviews: [
-      { reviewer: 'Romance Times', text: 'Sweeping and romantic, a true escape!', rating: 5 },
-      { reviewer: 'Historical Fiction Review', text: 'Hembram captures the spirit of the Highlands beautifully.', rating: 4 },
-    ],
+    reviews: [], // Reviews removed
     purchaseLinks: [
-      { retailer: 'Amazon', url: '#', iconName: BookOpen },
-      { retailer: 'Book Depository', url: '#', iconName: BookOpen },
+      { retailer: 'Amazon', url: 'https://www.amazon.com/s?k=Whispers+in+the+Heather+Hembram', iconName: BookOpen },
+      // { retailer: 'Book Depository', url: '#', iconName: BookOpen },
     ],
   },
 ];
@@ -87,4 +79,3 @@ export const navLinks = [
   { href: '/books', label: 'Books' },
   { href: '/contact', label: 'Contact' },
 ];
-
