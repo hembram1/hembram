@@ -4,29 +4,34 @@
 import { BookForm } from '@/components/admin/BookForm';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpenCheck } from "lucide-react";
-import { addBook } from '@/app/actions/admin/bookActions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import type { BookFormData } from '@/components/admin/BookForm'; 
+import { addBookToStorage } from '@/lib/localStorageUtils'; // Import directly
 
 export default function AddBookPage() {
   const { toast } = useToast();
   const router = useRouter();
 
   const handleSubmit = async (data: BookFormData) => {
-    // Server action `addBook` will now handle localStorage update
-    const result = await addBook(data);
-    if (result.success && result.newBook) {
-      toast({
-        title: "Book Added!",
-        description: `"${result.newBook.title}" has been added to localStorage.`,
-      });
-      // `booksDataUpdated` event is dispatched by saveBooksData in localStorageUtils
-      router.push('/admin/books'); 
-    } else {
+    try {
+      const newBook = addBookToStorage(data); // Call util directly
+      if (newBook) {
+        toast({
+          title: "Book Added!",
+          description: `"${newBook.title}" has been added to localStorage.`,
+        });
+        // localStorageUtils dispatches 'booksDataUpdated', so other components will react.
+        router.push('/admin/books'); 
+      } else {
+        // This case should ideally not happen if addBookToStorage is implemented correctly
+        throw new Error("Failed to add book directly to storage.");
+      }
+    } catch (error) {
+      console.error("Error adding book directly:", error);
       toast({
         title: "Error Adding Book",
-        description: result.message || "An unexpected error occurred.",
+        description: (error instanceof Error ? error.message : "An unexpected error occurred."),
         variant: "destructive",
       });
     }

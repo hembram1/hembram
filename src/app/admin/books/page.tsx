@@ -8,8 +8,7 @@ import Link from "next/link";
 import type { Book } from "@/lib/types";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { deleteBookAction } from "@/app/actions/admin/bookActions"; 
-import { getBooksData } from "@/lib/localStorageUtils";
+import { getBooksData, deleteBookFromStorage } from "@/lib/localStorageUtils"; // Import directly
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,25 +45,18 @@ export default function AdminBooksPage() {
 
     setIsDeleting(true);
     try {
-      // Call the server action which now updates localStorage
-      const result = await deleteBookAction(bookId);
-      if (result.success && result.books) {
-        toast({
-          title: "Book Deleted",
-          description: result.message || `Book "${bookToDelete.title}" has been deleted from localStorage.`,
-        });
-        setCurrentBooks(result.books); // Update state from action result
-      } else {
-        toast({
-          title: "Error Deleting Book",
-          description: result.message || "Something went wrong.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
+      const remainingBooks = deleteBookFromStorage(bookId); // Call util directly
       toast({
-        title: "Error",
-        description: "An unexpected error occurred while deleting the book.",
+        title: "Book Deleted",
+        description: `Book "${bookToDelete.title}" has been deleted from localStorage.`,
+      });
+      setCurrentBooks(remainingBooks); // Update state from direct call
+      // localStorageUtils dispatches 'booksDataUpdated' event.
+    } catch (error) {
+      console.error("Error deleting book directly:", error);
+      toast({
+        title: "Error Deleting Book",
+        description: (error instanceof Error ? error.message : "An unexpected error occurred."),
         variant: "destructive",
       });
     } finally {

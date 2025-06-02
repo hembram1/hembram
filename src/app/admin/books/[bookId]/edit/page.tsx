@@ -6,11 +6,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { BookForm } from '@/components/admin/BookForm';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Pencil, AlertTriangle } from "lucide-react";
-import { updateBook } from '@/app/actions/admin/bookActions';
 import { useToast } from '@/hooks/use-toast';
-import type { BookFormDataValues } from '@/app/actions/admin/bookActions';
+import type { BookFormDataValues } from '@/app/actions/admin/bookActions'; // Schema type can still be used
 import type { Book } from '@/lib/types';
-import { getBooksData } from "@/lib/localStorageUtils"; 
+import { getBooksData, updateBookInStorage } from "@/lib/localStorageUtils"; 
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
@@ -35,19 +34,27 @@ export default function EditBookPage() {
   const handleSubmit = async (data: BookFormDataValues) => {
     if (!bookToEdit) return;
 
-    // Server action `updateBook` will now handle localStorage update
-    const result = await updateBook(bookToEdit.id, data);
-    if (result.success && result.updatedBook) {
-      toast({
-        title: "Book Updated!",
-        description: result.message || `"${result.updatedBook.title}" has been updated in localStorage.`,
-      });
-      // `booksDataUpdated` event is dispatched by saveBooksData in localStorageUtils
-      router.push('/admin/books'); 
-    } else {
+    try {
+      const updatedBook = updateBookInStorage(bookToEdit.id, data); // Call util directly
+      if (updatedBook) {
+        toast({
+          title: "Book Updated!",
+          description: `"${updatedBook.title}" has been updated in localStorage.`,
+        });
+        // localStorageUtils dispatches 'booksDataUpdated'
+        router.push('/admin/books'); 
+      } else {
+        toast({
+          title: "Error Updating Book",
+          description: `Book with ID ${bookToEdit.id} not found for update or update failed.`,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating book directly:", error);
       toast({
         title: "Error Updating Book",
-        description: result.message || "An unexpected error occurred.",
+        description: (error instanceof Error ? error.message : "An unexpected error occurred."),
         variant: "destructive",
       });
     }
