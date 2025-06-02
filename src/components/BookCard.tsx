@@ -1,4 +1,6 @@
 
+'use client'; // Needs to be client if it uses hooks or client-side data indirectly
+
 import type { Book } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -15,6 +17,8 @@ export default function BookCard({ book }: BookCardProps) {
   const averageRating = book.reviews.length > 0
     ? book.reviews.reduce((acc, review) => acc + review.rating, 0) / book.reviews.length
     : 0;
+
+  const GenreIcon = book.genreIconName; // Handle potential undefined icon from localStorage data
 
   return (
     <Card className="relative flex flex-col shadow-xl transition-shadow duration-300 h-full rounded-2xl bg-card">
@@ -40,7 +44,7 @@ export default function BookCard({ book }: BookCardProps) {
             <Link href={`/books/${book.id}`}>{book.title}</Link>
           </CardTitle>
           <div className="flex items-center gap-2 mb-2">
-            {book.genreIconName && <book.genreIconName className="h-4 w-4 text-muted-foreground" />}
+            {GenreIcon && <GenreIcon className="h-4 w-4 text-muted-foreground" />}
             <Badge variant="secondary">{book.genre}</Badge>
           </div>
           <p className="text-sm text-muted-foreground line-clamp-3 mb-2">

@@ -14,10 +14,9 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Link2, PlusCircle, Save, Trash2, Pencil, AlertTriangle } from "lucide-react";
-import { author } from "@/lib/constants"; 
-import type { SocialLink } from '@/lib/types';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link2, PlusCircle, Save, Trash2, Pencil } from "lucide-react";
+import type { SocialLink, Author } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { addSocialLink, updateSocialLink, deleteSocialLink } from '@/app/actions/admin/socialLinkActions';
 import { useState, useEffect } from 'react';
@@ -29,7 +28,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
 import {
@@ -42,17 +40,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
+import { getSocialLinksFromStorage, getAuthorData } from '@/lib/localStorageUtils'; // Using direct utils
 
 const socialLinkSchema = z.object({
-  platform: z.string().min(2, { message: 'Platform name must be at least 2 characters.' }),
+  platform: z.string().min(1, { message: 'Platform name must be at least 1 character.' }),
   url: z.string().url({ message: 'Please enter a valid URL.' }),
 });
 
 export type SocialLinkFormValues = z.infer<typeof socialLinkSchema>;
 
-// For identifying the link being edited/deleted. Could be the original platform name or an index.
-// Using original platform name for simplicity in this simulation.
 interface EditableSocialLink extends SocialLink {
   originalPlatform?: string; 
 }
@@ -64,18 +61,24 @@ export default function AdminSocialLinksPage() {
   const [editingLink, setEditingLink] = useState<EditableSocialLink | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [linkToDelete, setLinkToDelete] = useState<EditableSocialLink | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Initialize with potentially modifiable originalPlatform
-    setCurrentLinks(author.socialLinks.map(link => ({ ...link, originalPlatform: link.platform })) || []);
+    const links = getSocialLinksFromStorage().map(link => ({ ...link, originalPlatform: link.platform }));
+    setCurrentLinks(links);
+    setIsLoading(false);
+
+    const handleAuthorUpdate = () => {
+      const updatedLinks = getSocialLinksFromStorage().map(link => ({ ...link, originalPlatform: link.platform }));
+      setCurrentLinks(updatedLinks);
+    };
+    window.addEventListener('authorDataUpdated', handleAuthorUpdate);
+    return () => window.removeEventListener('authorDataUpdated', handleAuthorUpdate);
   }, []);
 
   const form = useForm<SocialLinkFormValues>({
     resolver: zodResolver(socialLinkSchema),
-    defaultValues: {
-      platform: '',
-      url: '',
-    },
+    defaultValues: { platform: '', url: '' },
   });
 
   const editForm = useForm<SocialLinkFormValues>({
@@ -85,28 +88,22 @@ export default function AdminSocialLinksPage() {
   async function onAddSubmit(values: SocialLinkFormValues) {
     setIsSubmitting(true);
     try {
-      const result = await addSocialLink(values);
-      
-      if (result.success && result.newLink) {
+      const result = await addSocialLink(values); // Action updates localStorage
+      if (result.success && result.updatedAuthor) {
         toast({
           title: 'Social Link Added!',
-          description: `${result.newLink.platform} link has been (simulated) added.`,
+          description: `${values.platform} link has been added to localStorage.`,
         });
-        setCurrentLinks(prevLinks => [...prevLinks, { ...result.newLink, originalPlatform: result.newLink.platform } as EditableSocialLink]);
+        setCurrentLinks((result.updatedAuthor.socialLinks || []).map(l => ({ ...l, originalPlatform: l.platform })));
         form.reset();
       } else {
         toast({
           title: 'Error Adding Link',
-          description: result.message || 'Something went wrong. Please try again.',
-          variant: 'destructive',
+          description: result.message || 'Something went wrong.', variant: 'destructive',
         });
       }
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'An unexpected error occurred. Please try again later.',
-        variant: 'destructive',
-      });
+      toast({ title: 'Error', description: 'Unexpected error.', variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }
@@ -116,34 +113,23 @@ export default function AdminSocialLinksPage() {
     if (!editingLink || !editingLink.originalPlatform) return;
     setIsSubmitting(true);
     try {
-      const result = await updateSocialLink(editingLink.originalPlatform, values);
-      if (result.success && result.updatedLink) {
+      const result = await updateSocialLink(editingLink.originalPlatform, values); // Action updates localStorage
+      if (result.success && result.updatedAuthor) {
         toast({
           title: 'Social Link Updated!',
-          description: `${result.updatedLink.platform} link has been (simulated) updated.`,
+          description: `${values.platform} link has been updated in localStorage.`,
         });
-        setCurrentLinks(prevLinks => 
-          prevLinks.map(link => 
-            link.originalPlatform === editingLink.originalPlatform 
-            ? { ...result.updatedLink, originalPlatform: result.updatedLink.platform } as EditableSocialLink
-            : link
-          )
-        );
+        setCurrentLinks((result.updatedAuthor.socialLinks || []).map(l => ({ ...l, originalPlatform: l.platform })));
         setShowEditModal(false);
         setEditingLink(null);
       } else {
         toast({
           title: 'Error Updating Link',
-          description: result.message || 'Something went wrong. Please try again.',
-          variant: 'destructive',
+          description: result.message || 'Something went wrong.', variant: 'destructive',
         });
       }
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'An unexpected error occurred. Please try again.',
-        variant: 'destructive',
-      });
+      toast({ title: 'Error', description: 'Unexpected error.', variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }
@@ -158,30 +144,34 @@ export default function AdminSocialLinksPage() {
   async function handleDelete(platformToDelete: string) {
     setIsSubmitting(true);
     try {
-      const result = await deleteSocialLink(platformToDelete);
-      if (result.success) {
+      const result = await deleteSocialLink(platformToDelete); // Action updates localStorage
+      if (result.success && result.updatedAuthor) {
         toast({
           title: 'Social Link Deleted!',
-          description: `The link for ${platformToDelete} has been (simulated) deleted.`,
+          description: `The link for ${platformToDelete} has been deleted from localStorage.`,
         });
-        setCurrentLinks(prevLinks => prevLinks.filter(link => link.originalPlatform !== platformToDelete));
+        setCurrentLinks((result.updatedAuthor.socialLinks || []).map(l => ({ ...l, originalPlatform: l.platform })));
       } else {
         toast({
           title: 'Error Deleting Link',
-          description: result.message || 'Something went wrong. Please try again.',
-          variant: 'destructive',
+          description: result.message || 'Something went wrong.', variant: 'destructive',
         });
       }
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'An unexpected error occurred. Please try again.',
-        variant: 'destructive',
-      });
+      toast({ title: 'Error', description: 'Unexpected error.', variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
       setLinkToDelete(null);
     }
+  }
+
+  if (isLoading) {
+    return (
+      <Card className="shadow-lg">
+        <CardHeader><CardTitle>Loading social links...</CardTitle></CardHeader>
+        <CardContent><p>Please wait.</p></CardContent>
+      </Card>
+    );
   }
 
   return (
@@ -194,9 +184,7 @@ export default function AdminSocialLinksPage() {
               <CardTitle className="text-3xl font-headline">Social Links</CardTitle>
             </div>
             <CardDescription className="text-md">
-              Manage social media links and contact information.
-              <br />
-              <strong className="text-destructive-foreground bg-destructive/70 px-1 rounded-sm">Note:</strong> Changes are simulated and won't permanently update website data without database integration.
+              Manage social media links. Changes are saved to localStorage.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -276,7 +264,6 @@ export default function AdminSocialLinksPage() {
           </CardContent>
         </Card>
 
-        {/* Edit Modal */}
         <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
           <DialogContent>
             <DialogHeader>
@@ -315,7 +302,7 @@ export default function AdminSocialLinksPage() {
                 />
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button type="button" variant="outline">Cancel</Button>
+                    <Button type="button" variant="outline" onClick={() => setEditingLink(null)}>Cancel</Button>
                   </DialogClose>
                   <Button type="submit" disabled={isSubmitting}>
                     {isSubmitting ? 'Saving...' : 'Save Changes'}
@@ -327,12 +314,11 @@ export default function AdminSocialLinksPage() {
         </Dialog>
       </div>
 
-      {/* Delete Confirmation Dialog Content */}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action will (simulated) delete the social link for <span className="font-semibold">{linkToDelete?.platform}</span>. This cannot be undone from the current UI.
+            This action will delete the social link for <span className="font-semibold">{linkToDelete?.platform}</span> from localStorage.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

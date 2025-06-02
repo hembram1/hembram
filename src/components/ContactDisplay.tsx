@@ -1,11 +1,28 @@
 
-import { author } from "@/lib/constants";
+'use client';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AtSign, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ContactForm from "./ContactForm";
+import { useState, useEffect } from "react";
+import { getAuthorData } from "@/lib/localStorageUtils";
+import type { Author, SocialLink } from "@/lib/types";
 
 export default function ContactDisplay() {
+  const [author, setAuthor] = useState<Author | null>(null);
+
+  useEffect(() => {
+    setAuthor(getAuthorData());
+    const handleUpdate = () => setAuthor(getAuthorData());
+    window.addEventListener('authorDataUpdated', handleUpdate);
+    return () => window.removeEventListener('authorDataUpdated', handleUpdate);
+  }, []);
+
+  if (!author) {
+    return <div className="text-center">Loading contact info...</div>;
+  }
+
   return (
     <div className="space-y-10">
       <Card className="max-w-2xl mx-auto shadow-xl overflow-hidden rounded-2xl relative bg-card">
@@ -43,19 +60,22 @@ export default function ContactDisplay() {
             </CardHeader>
             <CardContent className="p-6 md:p-8 pt-0 text-center">
               <div className="flex flex-wrap justify-center gap-4">
-                {author.socialLinks.map((link) => (
-                  <Button
-                    key={link.platform}
-                    asChild
-                    variant="outline"
-                    className="border-accent text-accent hover:bg-accent hover:text-accent-foreground transform transition-transform duration-150 ease-in-out hover:scale-105"
-                  >
-                    <a href={link.url} target="_blank" rel="noopener noreferrer">
-                      {link.iconName && <link.iconName className="mr-2 h-5 w-5" />}
-                      {link.platform}
-                    </a>
-                  </Button>
-                ))}
+                {author.socialLinks.map((link) => {
+                  const IconComponent = link.iconName;
+                  return (
+                    <Button
+                      key={link.platform}
+                      asChild
+                      variant="outline"
+                      className="border-accent text-accent hover:bg-accent hover:text-accent-foreground transform transition-transform duration-150 ease-in-out hover:scale-105"
+                    >
+                      <a href={link.url} target="_blank" rel="noopener noreferrer">
+                        {IconComponent && <IconComponent className="mr-2 h-5 w-5" />}
+                        {link.platform}
+                      </a>
+                    </Button>
+                  );
+                })}
               </div>
             </CardContent>
           </div>

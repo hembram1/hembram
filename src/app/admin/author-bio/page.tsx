@@ -17,10 +17,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Save } from "lucide-react";
-import { author } from "@/lib/constants"; // To pre-fill the form
 import { useToast } from '@/hooks/use-toast';
 import { updateAuthorBio } from '@/app/actions/admin/authorActions';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getAuthorData, saveAuthorData } from '@/lib/localStorageUtils'; // Direct use for this client component
+import type { Author } from '@/lib/types';
 
 const authorBioSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -32,31 +33,38 @@ export type AuthorBioFormValues = z.infer<typeof authorBioSchema>;
 export default function AdminAuthorBioPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentAuthor, setCurrentAuthor] = useState<Author | null>(null);
 
   const form = useForm<AuthorBioFormValues>({
     resolver: zodResolver(authorBioSchema),
-    defaultValues: {
-      name: author.name || '',
-      bio: author.bio || '',
-    },
+    // Default values will be set by useEffect
   });
+
+  useEffect(() => {
+    const authorData = getAuthorData();
+    setCurrentAuthor(authorData);
+    form.reset({
+      name: authorData.name || '',
+      bio: authorData.bio || '',
+    });
+  }, [form]);
 
   async function onSubmit(values: AuthorBioFormValues) {
     setIsSubmitting(true);
     try {
-      const result = await updateAuthorBio(values);
-      if (result.success) {
-        toast({
-          title: 'Author Bio Updated!',
-          description: result.message || 'Your changes have been (simulated) saved.',
-        });
-      } else {
-        toast({
-          title: 'Error Updating Bio',
-          description: result.message || 'Something went wrong. Please try again.',
-          variant: 'destructive',
-        });
-      }
+      // Client-side direct update to localStorage
+      const authorData = getAuthorData();
+      authorData.name = values.name;
+      authorData.bio = values.bio;
+      saveAuthorData(authorData); // This will also dispatch 'authorDataUpdated' event
+
+      setCurrentAuthor(authorData); // Update local state for immediate reflection if needed
+
+      toast({
+        title: 'Author Bio Updated!',
+        description: 'Your changes have been saved to localStorage.',
+      });
+      
     } catch (error) {
       toast({
         title: 'Error',
@@ -67,6 +75,16 @@ export default function AdminAuthorBioPage() {
       setIsSubmitting(false);
     }
   }
+  
+  if (!currentAuthor) {
+    return (
+      <Card className="shadow-lg">
+        <CardHeader><CardTitle>Loading author data...</CardTitle></CardHeader>
+        <CardContent><p>Please wait...</p></CardContent>
+      </Card>
+    );
+  }
+
 
   return (
     <Card className="shadow-lg">
@@ -76,9 +94,7 @@ export default function AdminAuthorBioPage() {
           <CardTitle className="text-3xl font-headline">Author Bio</CardTitle>
         </div>
         <CardDescription className="text-md">
-          Edit the author biography and profile information.
-          <br />
-          <strong className="text-destructive-foreground bg-destructive/70 px-1 rounded-sm">Note:</strong> Changes saved here are simulated and will not permanently update the website data without database integration.
+          Edit the author biography and profile information. Changes are saved to localStorage.
         </CardDescription>
       </CardHeader>
       <CardContent>

@@ -2,9 +2,11 @@
 'use server';
 
 import { z } from 'zod';
+import { saveCurrentlyCraftingTitleToStorage } from '@/lib/localStorageUtils';
+import type { Author } from '@/lib/types';
 
 const currentlyCraftingSchema = z.object({
-  title: z.string().max(100, { message: 'Title must be 100 characters or less.' }).optional(), // Allow empty string to "clear"
+  title: z.string().max(100, { message: 'Title must be 100 characters or less.' }).optional(), 
 });
 
 export type CurrentlyCraftingFormValues = z.infer<typeof currentlyCraftingSchema>;
@@ -12,6 +14,7 @@ export type CurrentlyCraftingFormValues = z.infer<typeof currentlyCraftingSchema
 interface SubmissionResult {
   success: boolean;
   message?: string;
+  updatedAuthor?: Author;
 }
 
 export async function updateCurrentlyCraftingTitle(
@@ -28,17 +31,18 @@ export async function updateCurrentlyCraftingTitle(
 
   const { title } = parsedValues.data;
 
-  // --- SIMULATION ---
-  // In a real application, you would update this value in the database.
-  // For this simulation, we'll just log it and return success.
-  console.log('Simulating update for "Currently Crafting" title:');
-  console.log('New Title:', title);
-  
-  // Simulate a delay
-  await new Promise(resolve => setTimeout(resolve, 500));
-
-  return { 
-    success: true, 
-    message: `Currently Crafting title (simulated) update successful! ${title ? `Set to "${title}"` : 'Cleared'}. Data logged to console.` 
-  };
+  try {
+    const updatedAuthor = saveCurrentlyCraftingTitleToStorage(title || ''); // Pass empty string if title is undefined
+    return { 
+      success: true, 
+      message: `Currently Crafting title updated in localStorage! ${title ? `Set to "${title}"` : 'Cleared'}.`,
+      updatedAuthor: updatedAuthor
+    };
+  } catch (e) {
+    console.error("Error in updateCurrentlyCraftingTitle action:", e);
+    return {
+      success: false,
+      message: 'Failed to update currently crafting title in localStorage.',
+    };
+  }
 }

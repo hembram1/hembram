@@ -2,7 +2,8 @@
 'use server';
 
 import { z } from 'zod';
-import type { Book } from '@/lib/types'; // Assuming this type matches the data structure
+import type { Book, PurchaseLink, Review } from '@/lib/types'; 
+import { addBookToStorage, updateBookInStorage, deleteBookFromStorage } from '@/lib/localStorageUtils';
 
 // This schema should match BookFormData from BookForm.tsx
 const bookFormSchema = z.object({
@@ -14,6 +15,8 @@ const bookFormSchema = z.object({
   genre: z.string().min(3),
   themes: z.string().min(5),
   targetAudience: z.string().min(5),
+  // For simplicity, purchaseLinks and reviews are not part of direct form submission here
+  // but could be handled by more complex logic or separate admin sections.
 });
 
 export type BookFormDataValues = z.infer<typeof bookFormSchema>;
@@ -21,8 +24,9 @@ export type BookFormDataValues = z.infer<typeof bookFormSchema>;
 interface SubmissionResult {
   success: boolean;
   message?: string;
-  newBook?: Partial<Book>; 
-  updatedBook?: Partial<Book>;
+  newBook?: Book; 
+  updatedBook?: Book;
+  books?: Book[]; // For delete action
 }
 
 export async function addBook(
@@ -40,25 +44,26 @@ export async function addBook(
 
   const newBookData = parsedValues.data;
 
-  console.log('Simulating adding new Book:');
-  console.log('Title:', newBookData.title);
-  console.log('Genre:', newBookData.genre);
-  // ... log other fields as needed
-
-  await new Promise(resolve => setTimeout(resolve, 500));
-
-  const simulatedNewBook: Partial<Book> = {
-    id: `simulated-${Date.now()}`, 
-    ...newBookData,
-    reviews: [], 
-    purchaseLinks: [], 
-  };
-
-  return { 
-    success: true, 
-    message: `Book "${newBookData.title}" (simulated) addition successful! Data logged to console.`,
-    newBook: simulatedNewBook
-  };
+  try {
+    // Assuming default empty arrays for reviews and purchase links for a new book from this simple form
+    const bookWithDefaults = { 
+        ...newBookData, 
+        reviews: [] as Review[], 
+        purchaseLinks: [] as PurchaseLink[] 
+    };
+    const addedBook = addBookToStorage(bookWithDefaults);
+    return { 
+      success: true, 
+      message: `Book "${addedBook.title}" added to localStorage.`,
+      newBook: addedBook
+    };
+  } catch (e) {
+    console.error("Error in addBook action:", e);
+    return {
+      success: false,
+      message: 'Failed to add book to localStorage.',
+    };
+  }
 }
 
 export async function updateBook(
@@ -76,24 +81,48 @@ export async function updateBook(
   }
 
   const bookDataToUpdate = parsedValues.data;
-
-  console.log(`Simulating update for Book ID: ${bookId}`);
-  console.log('Updated Title:', bookDataToUpdate.title);
-  // ... log other fields as needed
-
-  await new Promise(resolve => setTimeout(resolve, 500));
-
-  // Construct the updated book object to return
-  const simulatedUpdatedBook: Partial<Book> = {
-    id: bookId, // Keep the original ID
-    ...bookDataToUpdate,
-    // reviews and purchaseLinks would typically be handled separately or merged if also editable here
-  };
-
-  return {
-    success: true,
-    message: `Book "${bookDataToUpdate.title}" (ID: ${bookId}) (simulated) update successful! Data logged to console.`,
-    updatedBook: simulatedUpdatedBook
-  };
+  
+  try {
+    // For update, we assume reviews and purchase links are managed elsewhere or merged if part of form
+    const bookWithPotentiallyExistingComplexFields = {
+         ...bookDataToUpdate,
+         // reviews and purchaseLinks would be merged if part of form.
+         // For this schema, they are not, so they'd remain as they are in localStorage.
+    };
+    const updatedBook = updateBookInStorage(bookId, bookWithPotentiallyExistingComplexFields);
+    if (updatedBook) {
+      return {
+        success: true,
+        message: `Book "${updatedBook.title}" (ID: ${bookId}) updated in localStorage.`,
+        updatedBook: updatedBook
+      };
+    }
+    return {
+      success: false,
+      message: `Book with ID ${bookId} not found for update.`,
+    };
+  } catch (e) {
+    console.error("Error in updateBook action:", e);
+    return {
+      success: false,
+      message: 'Failed to update book in localStorage.',
+    };
+  }
 }
-    
+
+export async function deleteBookAction(bookId: string): Promise<SubmissionResult> {
+  try {
+    const remainingBooks = deleteBookFromStorage(bookId);
+    return {
+      success: true,
+      message: `Book (ID: ${bookId}) deleted from localStorage.`,
+      books: remainingBooks,
+    };
+  } catch (e) {
+    console.error("Error in deleteBookAction:", e);
+    return {
+      success: false,
+      message: 'Failed to delete book from localStorage.',
+    };
+  }
+}

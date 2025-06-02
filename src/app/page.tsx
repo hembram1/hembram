@@ -1,21 +1,59 @@
 
+'use client';
+
 import Link from 'next/link';
 import AuthorBio from '@/components/AuthorBio';
 import BookCard from '@/components/BookCard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { books, author } from '@/lib/constants'; // Import author
 import { ArrowRight, PenTool, Library } from 'lucide-react';
 import TypingAnimation from '@/components/TypingAnimation';
+import { useState, useEffect } from 'react';
+import { getBooksData, getAuthorData } from '@/lib/localStorageUtils';
+import type { Book, Author } from '@/lib/types';
 
 export default function HomePage() {
-  const featuredBooks = books.slice(0, 3);
+  const [featuredBooks, setFeaturedBooks] = useState<Book[]>([]);
+  const [author, setAuthor] = useState<Author | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const booksData = getBooksData();
+    setFeaturedBooks(booksData.slice(0, 3));
+    setAuthor(getAuthorData());
+    setIsLoading(false);
+
+    const handleBooksUpdate = () => {
+      const updatedBooks = getBooksData();
+      setFeaturedBooks(updatedBooks.slice(0, 3));
+    };
+    const handleAuthorUpdate = () => {
+      setAuthor(getAuthorData());
+    };
+
+    window.addEventListener('booksDataUpdated', handleBooksUpdate);
+    window.addEventListener('authorDataUpdated', handleAuthorUpdate);
+
+    return () => {
+      window.removeEventListener('booksDataUpdated', handleBooksUpdate);
+      window.removeEventListener('authorDataUpdated', handleAuthorUpdate);
+    };
+  }, []);
+
+  if (isLoading || !author) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        Loading page content...
+      </div>
+    );
+  }
+  
   const currentlyWritingBook = author.currentlyCraftingBookTitle || "Stay tuned for the next adventure!";
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <section id="author-intro" className="mb-12">
-        <AuthorBio />
+        <AuthorBio /> {/* AuthorBio now fetches its own data or receives it */}
       </section>
 
       <section id="currently-writing" className="mb-16">

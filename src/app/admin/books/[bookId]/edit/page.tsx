@@ -10,7 +10,7 @@ import { updateBook } from '@/app/actions/admin/bookActions';
 import { useToast } from '@/hooks/use-toast';
 import type { BookFormDataValues } from '@/app/actions/admin/bookActions';
 import type { Book } from '@/lib/types';
-import { books as initialBooks } from "@/lib/constants"; // To find the book for editing
+import { getBooksData } from "@/lib/localStorageUtils"; 
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
@@ -20,15 +20,13 @@ export default function EditBookPage() {
   const params = useParams();
   const bookId = params.bookId as string;
 
-  const [bookToEdit, setBookToEdit] = useState<Book | null | undefined>(undefined); // undefined for loading, null if not found
+  const [bookToEdit, setBookToEdit] = useState<Book | null | undefined>(undefined); 
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (bookId) {
-      // Simulate fetching the book. In a real app, this would be an API call.
-      // For now, we find it in the constants.
-      // If managing a dynamic list (e.g. currentBooks from AdminBooksPage), you'd check that first.
-      const foundBook = initialBooks.find(b => b.id === bookId);
+      const books = getBooksData();
+      const foundBook = books.find(b => b.id === bookId);
       setBookToEdit(foundBook || null);
       setIsLoading(false);
     }
@@ -37,12 +35,14 @@ export default function EditBookPage() {
   const handleSubmit = async (data: BookFormDataValues) => {
     if (!bookToEdit) return;
 
+    // Server action `updateBook` will now handle localStorage update
     const result = await updateBook(bookToEdit.id, data);
-    if (result.success) {
+    if (result.success && result.updatedBook) {
       toast({
         title: "Book Updated!",
-        description: result.message || `"${data.title}" has been (simulated) updated.`,
+        description: result.message || `"${result.updatedBook.title}" has been updated in localStorage.`,
       });
+      // `booksDataUpdated` event is dispatched by saveBooksData in localStorageUtils
       router.push('/admin/books'); 
     } else {
       toast({
@@ -60,7 +60,7 @@ export default function EditBookPage() {
                 <CardTitle>Loading Book Details...</CardTitle>
             </CardHeader>
             <CardContent>
-                <p>Please wait while we fetch the book information.</p>
+                <p>Please wait while we fetch the book information from localStorage.</p>
             </CardContent>
         </Card>
     );
@@ -75,7 +75,7 @@ export default function EditBookPage() {
                 <CardTitle className="text-3xl font-headline text-destructive">Book Not Found</CardTitle>
             </div>
           <CardDescription className="text-md">
-            The book you are trying to edit could not be found. It might have been deleted or the ID is incorrect.
+            The book you are trying to edit could not be found in localStorage.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -95,9 +95,7 @@ export default function EditBookPage() {
           <CardTitle className="text-3xl font-headline">Edit Book: {bookToEdit.title}</CardTitle>
         </div>
         <CardDescription className="text-md">
-          Modify the details for the book.
-           <br />
-            <strong className="text-destructive-foreground bg-destructive/70 px-1 rounded-sm">Note:</strong> Book updates are simulated. Data changes will not be permanently saved.
+          Modify the details for the book. Changes will be saved to localStorage.
         </CardDescription>
       </CardHeader>
       <CardContent>

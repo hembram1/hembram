@@ -1,13 +1,16 @@
 
-import { books, author } from '@/lib/constants';
-import type { Book } from '@/lib/types';
-// import Image from 'next/image'; // Image component no longer directly used here for the main cover
+'use client';
+
+import type { Book, Author } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { AlertCircle, BookOpenCheck, ExternalLink, MessageSquare, ShoppingCart, Star, Users, ThumbsUp } from 'lucide-react';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { getBooksData, getAuthorData } from '@/lib/localStorageUtils';
+import { useParams } from 'next/navigation'; // For client components
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -19,10 +22,50 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-export default async function BookDetailPage({ params }: { params: { bookId: string } }) {
-  const book = books.find(b => b.id === params.bookId);
+export default function BookDetailPage() {
+  const params = useParams();
+  const bookId = params.bookId as string;
 
-  if (!book) {
+  const [book, setBook] = useState<Book | null | undefined>(undefined); // undefined for loading, null if not found
+  const [author, setAuthor] = useState<Author | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (bookId) {
+      const booksData = getBooksData();
+      const foundBook = booksData.find(b => b.id === bookId);
+      setBook(foundBook || null);
+      setAuthor(getAuthorData());
+      setIsLoading(false);
+    }
+
+    const handleBooksUpdate = () => {
+      const booksData = getBooksData();
+      const foundBook = booksData.find(b => b.id === bookId);
+      setBook(foundBook || null);
+    };
+     const handleAuthorUpdate = () => {
+      setAuthor(getAuthorData());
+    };
+
+    window.addEventListener('booksDataUpdated', handleBooksUpdate);
+    window.addEventListener('authorDataUpdated', handleAuthorUpdate);
+
+    return () => {
+      window.removeEventListener('booksDataUpdated', handleBooksUpdate);
+      window.removeEventListener('authorDataUpdated', handleAuthorUpdate);
+    };
+  }, [bookId]);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        Loading book details...
+      </div>
+    );
+  }
+
+  if (!book || !author) {
     return (
       <div className="container mx-auto px-4 py-8 text-center">
         <AlertCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
@@ -36,10 +79,12 @@ export default async function BookDetailPage({ params }: { params: { bookId: str
       </div>
     );
   }
+  
+  const GenreIcon = book.genreIconName; // Handle potential undefined icon
+  const PurchaseLinkIcon = ExternalLink; // Default icon
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Hero Section with Background Image */}
       <div
         className="relative rounded-lg overflow-hidden shadow-xl mb-8 min-h-[400px] md:min-h-[500px] flex items-center justify-center text-center p-6"
         style={{
@@ -53,7 +98,7 @@ export default async function BookDetailPage({ params }: { params: { bookId: str
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-headline font-bold mb-3 drop-shadow-md">{book.title}</h1>
           <p className="text-xl sm:text-2xl text-gray-200 mb-6 drop-shadow-sm">by {author.name}</p>
           <div className="flex items-center justify-center gap-2 mb-4">
-            {book.genreIconName && <book.genreIconName className="h-6 w-6 text-gray-200" />}
+            {GenreIcon && <GenreIcon className="h-6 w-6 text-gray-200" />}
             <Badge 
               variant="outline" 
               className="border-gray-300 text-gray-100 bg-black/30 backdrop-blur-sm text-md px-3 py-1"
@@ -63,12 +108,9 @@ export default async function BookDetailPage({ params }: { params: { bookId: str
           </div>
         </div>
       </div>
-      {/* End Hero Section */}
 
-      {/* Main Content Card */}
       <Card className="overflow-hidden shadow-xl rounded-lg">
         <div className="p-6 md:p-8">
-          {/* Summary, Target Audience, Key Themes */}
           <div className="space-y-8 mb-8">
             <div>
               <h3 className="text-2xl font-headline font-semibold text-primary mb-3 flex items-center">
@@ -94,21 +136,23 @@ export default async function BookDetailPage({ params }: { params: { bookId: str
         
           <Separator className="my-8" />
 
-          {/* Purchase This Book */}
           <div>
             <h2 className="text-3xl font-headline font-semibold text-primary mb-6 flex items-center">
               <ShoppingCart className="mr-3 h-7 w-7" /> Purchase This Book
             </h2>
             {book.purchaseLinks.length > 0 ? (
               <div className="flex flex-wrap gap-4">
-                {book.purchaseLinks.map((link, index) => (
-                  <Button key={index} asChild variant="outline" size="lg" className="border-accent text-accent hover:bg-accent hover:text-accent-foreground">
-                    <a href={link.url} target="_blank" rel="noopener noreferrer">
-                      {link.iconName ? <link.iconName className="mr-2 h-5 w-5" /> : <ExternalLink className="mr-2 h-5 w-5" />}
-                      Buy from {link.retailer}
-                    </a>
-                  </Button>
-                ))}
+                {book.purchaseLinks.map((link, index) => {
+                  const IconComponent = link.iconName || PurchaseLinkIcon;
+                  return (
+                    <Button key={index} asChild variant="outline" size="lg" className="border-accent text-accent hover:bg-accent hover:text-accent-foreground">
+                      <a href={link.url} target="_blank" rel="noopener noreferrer">
+                        <IconComponent className="mr-2 h-5 w-5" />
+                        Buy from {link.retailer}
+                      </a>
+                    </Button>
+                  );
+                })}
               </div>
             ) : (
               <p className="text-muted-foreground text-base md:text-lg">Purchase links are not available at this moment.</p>
@@ -117,7 +161,6 @@ export default async function BookDetailPage({ params }: { params: { bookId: str
 
           <Separator className="my-8" />
 
-          {/* Reader Reviews */}
           <div>
             <h2 className="text-3xl font-headline font-semibold text-primary mb-8 flex items-center">
               <MessageSquare className="mr-3 h-7 w-7" /> Reader Reviews
@@ -144,7 +187,6 @@ export default async function BookDetailPage({ params }: { params: { bookId: str
           </div>
         </div>
       </Card>
-      {/* End Main Content Card */}
     </div>
   );
 }

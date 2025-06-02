@@ -1,8 +1,33 @@
 
-import { author } from '@/lib/constants';
+'use client';
+
+import { useState, useEffect } from "react";
+import { getAuthorData } from "@/lib/localStorageUtils";
+import type { Author } from "@/lib/types";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const [author, setAuthor] = useState<Author | null>(null);
+
+  useEffect(() => {
+    setAuthor(getAuthorData());
+    const handleUpdate = () => setAuthor(getAuthorData());
+    window.addEventListener('authorDataUpdated', handleUpdate);
+    return () => window.removeEventListener('authorDataUpdated', handleUpdate);
+  }, []);
+
+  if (!author) {
+    return (
+      <footer className="py-8 mt-auto">
+        <div className="container mx-auto px-4">
+          <div className="bg-card text-card-foreground rounded-2xl shadow-xl p-6 text-center">
+            Loading footer...
+          </div>
+        </div>
+      </footer>
+    );
+  }
+
   return (
     <footer className="py-8 mt-auto">
       <div className="container mx-auto px-4">

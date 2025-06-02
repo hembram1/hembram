@@ -1,10 +1,36 @@
 
+'use client';
+
 import BookCard from '@/components/BookCard';
-import { books } from '@/lib/constants';
 import { Library } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { useState, useEffect } from 'react';
+import { getBooksData } from '@/lib/localStorageUtils';
+import type { Book } from '@/lib/types';
 
 export default function BooksPage() {
+  const [books, setBooks] = useState<Book[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setBooks(getBooksData());
+    setIsLoading(false);
+
+    const handleUpdate = () => {
+      setBooks(getBooksData());
+    };
+    window.addEventListener('booksDataUpdated', handleUpdate);
+    return () => window.removeEventListener('booksDataUpdated', handleUpdate);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        Loading books...
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <Card className="max-w-3xl mx-auto mb-10 overflow-hidden shadow-xl rounded-2xl p-6 sm:p-8 md:p-10 relative bg-card text-center">

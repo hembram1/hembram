@@ -2,10 +2,11 @@
 'use server';
 
 import { z } from 'zod';
-import type { SocialLink } from '@/lib/types'; 
+import type { SocialLink, Author } from '@/lib/types'; 
+import { addSocialLinkToStorage, updateSocialLinkInStorage, deleteSocialLinkFromStorage } from '@/lib/localStorageUtils';
 
 const socialLinkSchema = z.object({
-  platform: z.string().min(2),
+  platform: z.string().min(1, {message: "Platform cannot be empty."}), // Min 1 to ensure it's not empty
   url: z.string().url(),
   // iconName is not part of the form input for simplicity in this simulation
 });
@@ -15,8 +16,7 @@ export type SocialLinkFormValues = z.infer<typeof socialLinkSchema>;
 interface SubmissionResult {
   success: boolean;
   message?: string;
-  newLink?: Omit<SocialLink, 'iconName'> & { iconName?: SocialLink['iconName'] }; 
-  updatedLink?: Omit<SocialLink, 'iconName'> & { iconName?: SocialLink['iconName'] };
+  updatedAuthor?: Author; // Return the whole author object as it's updated
 }
 
 export async function addSocialLink(
@@ -30,29 +30,27 @@ export async function addSocialLink(
       message: 'Invalid form data. Please check your inputs.',
     };
   }
-
-  const { platform, url } = parsedValues.data;
-
-  console.log('Simulating adding new Social Link:');
-  console.log('Platform:', platform);
-  console.log('URL:', url);
-
-  await new Promise(resolve => setTimeout(resolve, 500));
-
-  const newLinkEntry: Omit<SocialLink, 'iconName'> & { iconName?: SocialLink['iconName'] } = { 
-    platform, 
-    url 
-  };
-
-  return { 
-    success: true, 
-    message: 'Social link (simulated) addition successful! Data logged to console.',
-    newLink: newLinkEntry
-  };
+  
+  try {
+    // The iconName will be undefined here, or mapped if a string key system was in place
+    const linkToAdd = { platform: values.platform, url: values.url };
+    const updatedAuthor = addSocialLinkToStorage(linkToAdd);
+    return { 
+      success: true, 
+      message: 'Social link added to localStorage.',
+      updatedAuthor: updatedAuthor,
+    };
+  } catch (e) {
+    console.error("Error in addSocialLink action:", e);
+    return {
+      success: false,
+      message: 'Failed to add social link to localStorage.',
+    };
+  }
 }
 
 export async function updateSocialLink(
-  originalPlatform: string, // Used as an ID for simulation
+  originalPlatform: string, 
   values: SocialLinkFormValues
 ): Promise<SubmissionResult> {
   const parsedValues = socialLinkSchema.safeParse(values);
@@ -64,37 +62,38 @@ export async function updateSocialLink(
     };
   }
 
-  const { platform, url } = parsedValues.data;
-
-  console.log(`Simulating update for Social Link (original platform: ${originalPlatform}):`);
-  console.log('New Platform:', platform);
-  console.log('New URL:', url);
-
-  await new Promise(resolve => setTimeout(resolve, 500));
-
-  const updatedLinkEntry: Omit<SocialLink, 'iconName'> & { iconName?: SocialLink['iconName'] } = { 
-    platform, 
-    url 
-  };
-
-  return { 
-    success: true, 
-    message: 'Social link (simulated) update successful! Data logged to console.',
-    updatedLink: updatedLinkEntry
-  };
+  try {
+    const linkToUpdate = { platform: values.platform, url: values.url };
+    const updatedAuthor = updateSocialLinkInStorage(originalPlatform, linkToUpdate);
+    return { 
+      success: true, 
+      message: 'Social link updated in localStorage.',
+      updatedAuthor: updatedAuthor,
+    };
+  } catch (e) {
+    console.error("Error in updateSocialLink action:", e);
+     return {
+      success: false,
+      message: 'Failed to update social link in localStorage.',
+    };
+  }
 }
 
 export async function deleteSocialLink(
-  platformToDelete: string // Used as an ID for simulation
+  platformToDelete: string 
 ): Promise<SubmissionResult> {
-  console.log(`Simulating delete for Social Link (platform: ${platformToDelete}):`);
-  
-  await new Promise(resolve => setTimeout(resolve, 500));
-
-  return { 
-    success: true, 
-    message: `Social link for ${platformToDelete} (simulated) deletion successful! Data logged to console.`
-  };
+  try {
+    const updatedAuthor = deleteSocialLinkFromStorage(platformToDelete);
+    return { 
+      success: true, 
+      message: `Social link for ${platformToDelete} deleted from localStorage.`,
+      updatedAuthor: updatedAuthor,
+    };
+  } catch (e) {
+    console.error("Error in deleteSocialLink action:", e);
+    return {
+      success: false,
+      message: 'Failed to delete social link from localStorage.',
+    };
+  }
 }
-
-    

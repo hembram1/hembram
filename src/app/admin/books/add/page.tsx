@@ -7,21 +7,21 @@ import { BookOpenCheck } from "lucide-react";
 import { addBook } from '@/app/actions/admin/bookActions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import type { BookFormData } from '@/components/admin/BookForm'; // Ensure this type is defined
+import type { BookFormData } from '@/components/admin/BookForm'; 
 
 export default function AddBookPage() {
   const { toast } = useToast();
   const router = useRouter();
 
   const handleSubmit = async (data: BookFormData) => {
+    // Server action `addBook` will now handle localStorage update
     const result = await addBook(data);
-    if (result.success) {
+    if (result.success && result.newBook) {
       toast({
         title: "Book Added!",
-        description: `"${data.title}" has been (simulated) added.`,
+        description: `"${result.newBook.title}" has been added to localStorage.`,
       });
-      // In a real app, you might redirect to the books list or the new book's detail page
-      // For simulation, we can redirect to the main admin books page
+      // `booksDataUpdated` event is dispatched by saveBooksData in localStorageUtils
       router.push('/admin/books'); 
     } else {
       toast({
@@ -40,9 +40,7 @@ export default function AddBookPage() {
           <CardTitle className="text-3xl font-headline">Add New Book</CardTitle>
         </div>
         <CardDescription className="text-md">
-          Fill in the details for the new book. All fields are required for this simulation.
-           <br />
-            <strong className="text-destructive-foreground bg-destructive/70 px-1 rounded-sm">Note:</strong> Book addition is simulated. Data will not be permanently saved.
+          Fill in the details for the new book. Data will be saved to localStorage.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -51,5 +49,3 @@ export default function AddBookPage() {
     </Card>
   );
 }
-
-    

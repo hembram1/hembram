@@ -16,10 +16,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PenTool, Save } from "lucide-react";
-import { author } from "@/lib/constants"; // To pre-fill the form
 import { useToast } from '@/hooks/use-toast';
 import { updateCurrentlyCraftingTitle } from '@/app/actions/admin/craftingActions';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getCurrentlyCraftingTitleFromStorage, saveCurrentlyCraftingTitleToStorage } from '@/lib/localStorageUtils'; // Direct use for client component
+import type { Author } from '@/lib/types';
+
 
 const currentlyCraftingSchema = z.object({
   title: z.string().max(100, { message: 'Title must be 100 characters or less.' }).optional(),
@@ -30,30 +32,34 @@ export type CurrentlyCraftingFormValues = z.infer<typeof currentlyCraftingSchema
 export default function AdminCurrentlyCraftingPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentTitle, setCurrentTitle] = useState('');
 
   const form = useForm<CurrentlyCraftingFormValues>({
     resolver: zodResolver(currentlyCraftingSchema),
-    defaultValues: {
-      title: author.currentlyCraftingBookTitle || '',
-    },
+    // Default values will be set by useEffect
   });
+
+  useEffect(() => {
+    const titleFromStorage = getCurrentlyCraftingTitleFromStorage();
+    setCurrentTitle(titleFromStorage);
+    form.reset({
+      title: titleFromStorage || '',
+    });
+  }, [form]);
 
   async function onSubmit(values: CurrentlyCraftingFormValues) {
     setIsSubmitting(true);
     try {
-      const result = await updateCurrentlyCraftingTitle(values);
-      if (result.success) {
-        toast({
-          title: 'Currently Crafting Title Updated!',
-          description: result.message || 'Your changes have been (simulated) saved.',
-        });
-      } else {
-        toast({
-          title: 'Error Updating Title',
-          description: result.message || 'Something went wrong. Please try again.',
-          variant: 'destructive',
-        });
-      }
+      // Direct client-side update to localStorage
+      saveCurrentlyCraftingTitleToStorage(values.title || ''); // Dispatches 'authorDataUpdated'
+
+      setCurrentTitle(values.title || ''); // Update local state
+
+      toast({
+        title: 'Currently Crafting Title Updated!',
+        description: 'Your changes have been saved to localStorage.',
+      });
+      
     } catch (error) {
       toast({
         title: 'Error',
@@ -74,9 +80,7 @@ export default function AdminCurrentlyCraftingPage() {
         </div>
         <CardDescription className="text-md">
           Update the title of the book Hembram is currently writing. This will be displayed on the homepage.
-          Leave blank to clear the title.
-          <br />
-          <strong className="text-destructive-foreground bg-destructive/70 px-1 rounded-sm">Note:</strong> Changes saved here are simulated and will not permanently update the website data without database integration.
+          Leave blank to clear the title. Changes are saved to localStorage.
         </CardDescription>
       </CardHeader>
       <CardContent>

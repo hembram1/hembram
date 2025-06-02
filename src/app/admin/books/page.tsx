@@ -5,11 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { BookOpen, PlusCircle, AlertTriangle, Trash2, Pencil } from "lucide-react";
 import Link from "next/link";
-import { books as initialBooks } from "@/lib/constants"; // To display current books
 import type { Book } from "@/lib/types";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-// import { deleteBook } from "@/app/actions/admin/bookActions"; // Will be created
+import { deleteBookAction } from "@/app/actions/admin/bookActions"; 
+import { getBooksData } from "@/lib/localStorageUtils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,26 +22,23 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
-// Placeholder for actual deleteBook action
-async function deleteBook(bookId: string): Promise<{success: boolean, message?: string}> {
-  console.log(`Simulating delete for Book ID: ${bookId}`);
-  await new Promise(resolve => setTimeout(resolve, 500));
-  // In a real app, you'd interact with your backend here.
-  // For now, always return success for simulation.
-  // const isSuccess = Math.random() > 0.1; // 90% chance of success for simulation
-  // if (!isSuccess) return { success: false, message: "Simulated error deleting book."};
-  return { success: true, message: `Book (ID: ${bookId}) (simulated) deletion successful! Data logged to console.` };
-}
-
 
 export default function AdminBooksPage() {
   const { toast } = useToast();
   const [currentBooks, setCurrentBooks] = useState<Book[]>([]);
   const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setCurrentBooks(initialBooks);
+    setCurrentBooks(getBooksData());
+    setIsLoading(false);
+
+    const handleBooksUpdate = () => {
+        setCurrentBooks(getBooksData());
+    };
+    window.addEventListener('booksDataUpdated', handleBooksUpdate);
+    return () => window.removeEventListener('booksDataUpdated', handleBooksUpdate);
   }, []);
 
   const handleDeleteBook = async (bookId: string) => {
@@ -49,13 +46,14 @@ export default function AdminBooksPage() {
 
     setIsDeleting(true);
     try {
-      const result = await deleteBook(bookId);
-      if (result.success) {
+      // Call the server action which now updates localStorage
+      const result = await deleteBookAction(bookId);
+      if (result.success && result.books) {
         toast({
           title: "Book Deleted",
-          description: result.message || `Book "${bookToDelete.title}" has been (simulated) deleted.`,
+          description: result.message || `Book "${bookToDelete.title}" has been deleted from localStorage.`,
         });
-        setCurrentBooks(prevBooks => prevBooks.filter(book => book.id !== bookId));
+        setCurrentBooks(result.books); // Update state from action result
       } else {
         toast({
           title: "Error Deleting Book",
@@ -75,6 +73,14 @@ export default function AdminBooksPage() {
     }
   };
 
+  if (isLoading) {
+    return (
+        <Card className="shadow-lg">
+            <CardHeader><CardTitle>Loading books...</CardTitle></CardHeader>
+            <CardContent><p>Please wait.</p></CardContent>
+        </Card>
+    );
+  }
 
   return (
     <AlertDialog open={!!bookToDelete} onOpenChange={(isOpen) => !isOpen && setBookToDelete(null)}>
@@ -94,9 +100,7 @@ export default function AdminBooksPage() {
               </Button>
             </div>
             <CardDescription className="text-md">
-              Add, edit, or delete books. Manage which books are featured.
-              <br />
-              <strong className="text-destructive-foreground bg-destructive/70 px-1 rounded-sm">Note:</strong> Add, Edit, and Delete operations are simulated. Data changes are not persisted.
+              Add, edit, or delete books. Changes are saved to localStorage.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -110,7 +114,6 @@ export default function AdminBooksPage() {
                     </div>
                     <div className="flex gap-2">
                       <Button variant="outline" size="sm" asChild>
-                        {/* Wrap Link in a span to ensure Slot gets a simple child */}
                         <span>
                           <Link href={`/admin/books/${book.id}/edit`}>
                             <span>
@@ -130,19 +133,18 @@ export default function AdminBooksPage() {
               </div>
             ) : (
               <div className="border border-dashed rounded-md p-8 text-center text-muted-foreground">
-                <p>No books found. Add your first book!</p>
+                <p>No books found in localStorage. Add your first book!</p>
               </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Delete Confirmation Dialog for Books */}
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action will (simulated) delete the book <span className="font-semibold">&quot;{bookToDelete?.title}&quot;</span>.
-              This is a destructive action and cannot be undone from the UI.
+              This action will delete the book <span className="font-semibold">&quot;{bookToDelete?.title}&quot;</span> from localStorage.
+              This is a destructive action.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
