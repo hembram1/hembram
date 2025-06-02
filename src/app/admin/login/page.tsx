@@ -19,7 +19,7 @@ import { LogIn, ShieldAlert } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { login, isAuthenticated, getAdminContactEmail } from '@/lib/authUtils';
+import { login, isAuthenticated } from '@/lib/authUtils'; // Removed getAdminContactEmail as it's no longer used here
 import Link from 'next/link';
 
 const loginSchema = z.object({
@@ -131,14 +131,7 @@ export default function AdminLoginPage() {
               </Button>
             </form>
           </Form>
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            Forgot your password? Contact{' '}
-            <a href={`mailto:${getAdminContactEmail()}`} className="font-medium text-primary hover:underline">
-              {getAdminContactEmail()}
-            </a>{' '}
-            for assistance.
-          </p>
-           <div className="mt-4 text-center">
+           <div className="mt-6 text-center">
             <Button variant="link" asChild className="text-sm">
               <Link href="/">Back to Main Site</Link>
             </Button>
