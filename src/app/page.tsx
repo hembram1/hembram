@@ -42,8 +42,9 @@ export default function HomePage() {
 
   if (isLoading || !author) {
     return (
-      <div className="container mx-auto px-4 py-8 text-center">
-        Loading page content...
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
+        <span className="text-8xl font-headline font-bold text-primary animate-pulse">H.</span>
+        <p className="mt-4 text-lg text-muted-foreground">Loading page content...</p>
       </div>
     );
   }
