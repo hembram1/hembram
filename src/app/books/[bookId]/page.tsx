@@ -49,8 +49,9 @@ export default function BookDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 text-center">
-        Loading book details...
+      <div className="flex flex-col items-center justify-center py-16">
+        <span className="text-7xl font-headline font-bold text-primary animate-pulse">H.</span>
+        <p className="mt-3 text-md text-muted-foreground">Loading book details...</p>
       </div>
     );
   }
@@ -153,4 +154,3 @@ export default function BookDetailPage() {
     </div>
   );
 }
-
