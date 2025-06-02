@@ -1,8 +1,8 @@
 
-import type { Book } from './types';
+import type { Book, Author } from './types';
 import { BookOpen, Users, Feather, Heart, Shield, Rocket, Microscope, Drama, Library, Mail, Twitter, Instagram, Linkedin, Facebook, X, PenTool } from 'lucide-react';
 
-export const author = {
+export const author: Author = {
   name: 'Hembram',
   bio: "I’m Hembram — someone who doesn’t just live life but truly feels it… and through stories, I try to express those emotions to the world.\n\nWriting, for me, isn’t just an art — it’s a journey. Every word, every scene, every character is tied to something real inside me. I write the kind of stories that come not just from the mind, but straight from the heart. Whether it’s childhood memories or moments from youth, the colors of love or the silence of loneliness — I try to bring every emotion to life through my words.\n\nPeople often ask me, “Why do you write?” And my answer is simple — because some things can only be said through writing.\n\nIf you love stories filled with raw emotions — a bit of truth, a touch of dreams, some pain, and a little smile — then maybe my books will speak to your heart.\n\nThank you,\n– Hembram",
   contactEmail: 'contact@hembramwrites.com',
@@ -14,7 +14,9 @@ export const author = {
     { platform: 'LinkedIn', url: 'https://linkedin.com/in/hembramwrites', iconName: Linkedin },
     { platform: 'Facebook', url: 'https://facebook.com/hembramwrites', iconName: Facebook },
   ],
-  currentlyCraftingBookTitle: "The Serpent's Cipher", // Added new field
+  currentlyCraftingBookTitle: "The Serpent's Cipher",
+  siteTitle: "Hembram - Official Author Website",
+  logoUrl: "", // Intentionally empty, can be set via admin
 };
 
 export const books: Book[] = [
@@ -85,3 +87,4 @@ export const navLinks = [
   { href: '/books', label: 'Books' },
   { href: '/contact', label: 'Contact' },
 ];
+

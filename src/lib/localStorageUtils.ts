@@ -3,9 +3,9 @@
 'use client'; // Ensure this can be used client-side for localStorage access
 
 import { author as defaultAuthorConst, books as defaultBooksConst } from '@/lib/constants';
-import type { Author, Book, SocialLink } from '@/lib/types';
+import type { Author, Book, SocialLink, Review, PurchaseLink } from '@/lib/types';
 
-const AUTHOR_KEY = 'hembram_author_data_v1';
+const AUTHOR_KEY = 'hembram_author_data_v2'; // Incremented version due to schema change
 const BOOKS_KEY = 'hembram_books_data_v1';
 
 function safeJsonParse<T>(jsonString: string | null, defaultValue: T): T {
@@ -22,16 +22,20 @@ function safeJsonParse<T>(jsonString: string | null, defaultValue: T): T {
 export function getAuthorData(): Author {
   if (typeof window === 'undefined') return { ...defaultAuthorConst };
   const storedData = localStorage.getItem(AUTHOR_KEY);
-  // Ensure a deep copy and handle potential loss of non-serializable parts like icon components
   const parsedAuthor = safeJsonParse<Author>(storedData, { ...defaultAuthorConst });
   
-  // Re-hydrate non-serializable iconName for social links from default if lost during stringification
-  // This is a simplified approach. A more robust system would store icon string keys.
   if (parsedAuthor.socialLinks && defaultAuthorConst.socialLinks) {
     parsedAuthor.socialLinks = parsedAuthor.socialLinks.map(link => {
       const defaultLink = defaultAuthorConst.socialLinks.find(dl => dl.platform === link.platform);
       return { ...link, iconName: defaultLink?.iconName || link.iconName };
     });
+  }
+  // Ensure new fields have defaults if loading older data structure
+  if (parsedAuthor.siteTitle === undefined) {
+    parsedAuthor.siteTitle = defaultAuthorConst.siteTitle;
+  }
+  if (parsedAuthor.logoUrl === undefined) {
+    parsedAuthor.logoUrl = defaultAuthorConst.logoUrl;
   }
 
   return parsedAuthor;
@@ -39,10 +43,11 @@ export function getAuthorData(): Author {
 
 export function saveAuthorData(authorData: Author): void {
   if (typeof window === 'undefined') return;
-  // Create a serializable copy, excluding functions or complex objects if necessary
   const serializableAuthor = {
     ...authorData,
-    socialLinks: authorData.socialLinks?.map(sl => ({ platform: sl.platform, url: sl.url })) // Store only serializable parts
+    socialLinks: authorData.socialLinks?.map(sl => ({ platform: sl.platform, url: sl.url })),
+    siteTitle: authorData.siteTitle,
+    logoUrl: authorData.logoUrl,
   };
   localStorage.setItem(AUTHOR_KEY, JSON.stringify(serializableAuthor));
   window.dispatchEvent(new CustomEvent('authorDataUpdated'));
@@ -52,11 +57,8 @@ export function saveAuthorData(authorData: Author): void {
 export function getBooksData(): Book[] {
   if (typeof window === 'undefined') return [...defaultBooksConst];
   const storedData = localStorage.getItem(BOOKS_KEY);
-  // Ensure a deep copy and handle potential loss of non-serializable parts
   const parsedBooks = safeJsonParse<Book[]>(storedData, [...defaultBooksConst]);
 
-  // Re-hydrate non-serializable iconName for books from default if lost.
-  // This is a simplified approach.
    return parsedBooks.map(book => {
     const defaultBook = defaultBooksConst.find(db => db.id === book.id);
     const purchaseLinks = book.purchaseLinks.map(pl => {
@@ -69,11 +71,9 @@ export function getBooksData(): Book[] {
 
 export function saveBooksData(booksData: Book[]): void {
   if (typeof window === 'undefined') return;
-  // Create a serializable copy
   const serializableBooks = booksData.map(book => ({
     ...book,
-    // Explicitly exclude or transform non-serializable fields if they exist beyond iconName
-    genreIconName: undefined, // Will be lost if not handled by string key mapping
+    genreIconName: undefined, 
     purchaseLinks: book.purchaseLinks.map(pl => ({retailer: pl.retailer, url: pl.url}))
   }));
   localStorage.setItem(BOOKS_KEY, JSON.stringify(serializableBooks));
@@ -81,6 +81,15 @@ export function saveBooksData(booksData: Book[]): void {
 }
 
 // --- Specific Helpers ---
+
+// Site Settings (part of Author object)
+export function updateSiteSettingsInStorage(siteTitle: string, logoUrl: string): Author {
+  const authorData = getAuthorData();
+  authorData.siteTitle = siteTitle;
+  authorData.logoUrl = logoUrl;
+  saveAuthorData(authorData);
+  return authorData;
+}
 
 // Author Bio
 export function updateAuthorBioInStorage(name: string, bio: string): Author {
@@ -112,9 +121,7 @@ export function getSocialLinksFromStorage(): SocialLink[] {
 
 export function addSocialLinkToStorage(newLink: Omit<SocialLink, 'iconName'>): Author {
   const authorData = getAuthorData();
-  // For localStorage, we might not easily store the icon component.
-  // Let's assume iconName is handled by mapping a string if needed, or omitted for storage.
-  const linkToAdd: SocialLink = { ...newLink, iconName: undefined }; // Example: iconName handled separately
+  const linkToAdd: SocialLink = { ...newLink, iconName: undefined }; 
   const defaultLink = defaultAuthorConst.socialLinks?.find(sl => sl.platform.toLowerCase() === newLink.platform.toLowerCase());
   if (defaultLink) {
     linkToAdd.iconName = defaultLink.iconName;
@@ -142,16 +149,14 @@ export function deleteSocialLinkFromStorage(platformToDelete: string): Author {
 }
 
 // Books
-export function addBookToStorage(newBookData: Omit<Book, 'id' | 'reviews' | 'purchaseLinks' | 'genreIconName'> & { purchaseLinks?: PurchaseLink[], reviews?: Review[] }): Book {
+export function addBookToStorage(newBookData: Omit<Book, 'id' | 'genreIconName'> & { purchaseLinks: PurchaseLink[], reviews: Review[] }): Book {
   const books = getBooksData();
   const newBook: Book = {
     id: `book-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     ...newBookData,
-    reviews: newBookData.reviews || [],
-    purchaseLinks: newBookData.purchaseLinks?.map(pl => ({ ...pl, iconName: undefined })) || [], // IconName handling
-    genreIconName: undefined, // IconName handling
+    purchaseLinks: newBookData.purchaseLinks?.map(pl => ({ ...pl, iconName: undefined })),
+    genreIconName: undefined,
   };
-  // Attempt to re-add default icon if genre matches
   const defaultBookMatch = defaultBooksConst.find(db => db.genre.toLowerCase() === newBook.genre.toLowerCase());
   if (defaultBookMatch) {
       newBook.genreIconName = defaultBookMatch.genreIconName;
@@ -166,19 +171,19 @@ export function addBookToStorage(newBookData: Omit<Book, 'id' | 'reviews' | 'pur
   return newBook;
 }
 
-export function updateBookInStorage(bookId: string, updatedBookData: Omit<Book, 'id' | 'reviews' | 'purchaseLinks' | 'genreIconName'> & { purchaseLinks?: PurchaseLink[], reviews?: Review[] }): Book | undefined {
+export function updateBookInStorage(bookId: string, updatedBookData: Omit<Book, 'id' | 'genreIconName'> & { purchaseLinks: PurchaseLink[], reviews: Review[] }): Book | undefined {
   let books = getBooksData();
   let bookToUpdate: Book | undefined;
   const updatedBooks = books.map(book => {
     if (book.id === bookId) {
       bookToUpdate = {
-        ...book,
-        ...updatedBookData,
-        purchaseLinks: updatedBookData.purchaseLinks?.map(pl => ({ ...pl, iconName: undefined })) || book.purchaseLinks, // IconName handling
-        genreIconName: undefined, // IconName handling
+        ...book, // Preserve existing ID, reviews, purchase links unless explicitly changed
+        ...updatedBookData, // Apply updates
+        // Ensure complex fields are handled
+        purchaseLinks: updatedBookData.purchaseLinks?.map(pl => ({ ...pl, iconName: undefined })) || book.purchaseLinks,
         reviews: updatedBookData.reviews || book.reviews,
+        genreIconName: undefined, 
       };
-      // Attempt to re-add default icon if genre matches
       const defaultBookMatch = defaultBooksConst.find(db => db.genre.toLowerCase() === bookToUpdate!.genre.toLowerCase());
       if (defaultBookMatch) {
           bookToUpdate.genreIconName = defaultBookMatch.genreIconName;
@@ -195,6 +200,7 @@ export function updateBookInStorage(bookId: string, updatedBookData: Omit<Book, 
   return bookToUpdate;
 }
 
+
 export function deleteBookFromStorage(bookId: string): Book[] {
   const books = getBooksData();
   const updatedBooks = books.filter(book => book.id !== bookId);
@@ -205,7 +211,11 @@ export function deleteBookFromStorage(bookId: string): Book[] {
 // Initialize if not present
 if (typeof window !== 'undefined') {
   if (!localStorage.getItem(AUTHOR_KEY)) {
-    saveAuthorData(defaultAuthorConst);
+    // Check if siteTitle or logoUrl are missing from constants, add them if so
+    const initialAuthorData = {...defaultAuthorConst};
+    if (initialAuthorData.siteTitle === undefined) initialAuthorData.siteTitle = "Hembram - Official Author Website";
+    if (initialAuthorData.logoUrl === undefined) initialAuthorData.logoUrl = "";
+    saveAuthorData(initialAuthorData);
   }
   if (!localStorage.getItem(BOOKS_KEY)) {
     saveBooksData(defaultBooksConst);

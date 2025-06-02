@@ -1,3 +1,4 @@
+
 import type { LucideIcon } from 'lucide-react';
 
 export interface Review {
@@ -25,6 +26,9 @@ export interface Author {
   authorImageUrl?: string;
   authorImageHint?: string;
   socialLinks?: SocialLink[];
+  currentlyCraftingBookTitle?: string;
+  siteTitle?: string;
+  logoUrl?: string;
 }
 
 export interface Book {
@@ -41,3 +45,4 @@ export interface Book {
   reviews: Review[];
   purchaseLinks: PurchaseLink[];
 }
+

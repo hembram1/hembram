@@ -3,12 +3,34 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { navLinks } from '@/lib/constants';
+import { navLinks } from '@/lib/constants'; // navLinks is static
 import { BookMarked } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
+import { getAuthorData } from '@/lib/localStorageUtils';
+import type { Author } from '@/lib/types';
+import Image from 'next/image';
 
 export default function Navbar() {
   const pathname = usePathname();
+  const [siteTitle, setSiteTitle] = useState('Hembram'); // Default title
+  const [logoUrl, setLogoUrl] = useState('');
+
+  useEffect(() => {
+    const updateNavbarData = () => {
+      const authorData = getAuthorData();
+      setSiteTitle(authorData.siteTitle || 'Hembram');
+      setLogoUrl(authorData.logoUrl || '');
+    };
+
+    updateNavbarData(); // Initial load
+
+    window.addEventListener('authorDataUpdated', updateNavbarData);
+    return () => {
+      window.removeEventListener('authorDataUpdated', updateNavbarData);
+    };
+  }, []);
+
 
   return (
     <>
@@ -21,9 +43,13 @@ export default function Navbar() {
               href="/"
               className="flex items-center gap-2 group transition-opacity hover:opacity-80"
             >
-              <BookMarked className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+              {logoUrl ? (
+                 <Image src={logoUrl} alt={`${siteTitle} logo`} width={24} height={24} className="h-5 w-5 sm:h-6 sm:w-6 object-contain" />
+              ) : (
+                <BookMarked className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+              )}
               <span className="text-lg sm:text-xl font-headline font-semibold text-primary">
-                Hembram
+                {siteTitle}
               </span>
             </Link>
           </div>
@@ -85,4 +111,3 @@ export default function Navbar() {
     </>
   );
 }
-
