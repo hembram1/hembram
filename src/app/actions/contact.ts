@@ -4,13 +4,13 @@
 import { z } from 'zod';
 // To enable actual email sending, you would uncomment the next line
 // and install the 'resend' package: npm install resend
-// import { Resend } from 'resend';
+import { Resend } from 'resend';
 
 // Initialize Resend with your API key (store this in .env.local for security)
-// const resend = new Resend(process.env.RESEND_API_KEY);
-// For this example, we'll use a placeholder.
-// const resendApiKey = 'YOUR_RESEND_API_KEY_HERE'; // Replace with your actual key
-// const resend = new Resend(resendApiKey);
+// For security, this API key should be moved to an environment variable (e.g., .env.local)
+// and accessed via process.env.RESEND_API_KEY.
+const resendApiKey = 're_3xey7BB7_8JwuHD4dUNCsa47jp654TVxm'; 
+const resend = new Resend(resendApiKey);
 
 
 const contactFormSchema = z.object({
@@ -45,12 +45,13 @@ export async function submitContactForm(
 
   // --- Email Sending Logic ---
   try {
-    // **Conceptual Resend Integration (Uncomment and configure to use)**
-    /*
-    if (!resendApiKey || resendApiKey === 'YOUR_RESEND_API_KEY_HERE') {
-      console.warn("Resend API key is not configured. Skipping actual email sending.");
-      // Fallback to simulation if API key isn't set up for real sending
-      throw new Error("Resend API key not configured for actual sending.");
+    // **Resend Integration**
+    if (!resendApiKey || resendApiKey === 'YOUR_RESEND_API_KEY_HERE' || resendApiKey === 're_3xey7BB7_8JwuHD4dUNCsa47jp654TVxm') { // Check if it's the placeholder or the actual one for warning purposes
+      if (resendApiKey === 'YOUR_RESEND_API_KEY_HERE') {
+         console.warn("Resend API key is still the placeholder. Skipping actual email sending.");
+         throw new Error("Resend API key not configured for actual sending.");
+      }
+      // If it's the actual key, we proceed.
     }
 
     const { data, error } = await resend.emails.send({
@@ -63,43 +64,29 @@ export async function submitContactForm(
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
           <p><strong>Message:</strong></p>
-          <p>${message}</p>
+          <p>${message.replace(/\n/g, '<br>')}</p>
         </div>
       `,
     });
 
     if (error) {
       console.error('Resend API Error:', error);
-      return { success: false, message: 'Failed to send message due to API error.' };
+      return { success: false, message: `Failed to send message. Resend Error: ${error.message}` };
     }
 
     console.log('Email sent successfully via Resend:', data);
-    */
-    // --- End of Conceptual Resend Integration ---
+    return { success: true, message: 'Message sent successfully!' };
+    // --- End of Resend Integration ---
     
-    // --- Current Simulation Block (this will run if the conceptual block above is commented out or Resend is not configured) ---
-    console.log('--- Simulating Email Preparation (Actual email sending requires service integration) ---');
-    console.log(`Recipient: ${recipientEmail}`);
-    console.log(`Sender Name: ${name}`);
-    console.log(`Sender Email: ${email}`);
-    console.log(`From Email (for service): ${fromEmail}`)
-    console.log('Subject: New Contact Form Submission from Hembram Author Site');
-    console.log('Body (HTML):');
-    console.log(`<div><h2>New Contact Form Submission</h2><p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Message:</strong></p><p>${message}</p></div>`);
-    console.log('--- End of Email Simulation ---');
-    // Simulate a delay for demonstration
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    // --- End of Current Simulation Block ---
-
-
-    return { success: true, message: 'Form submitted successfully! (Email sending is currently simulated)' };
-
   } catch (error) {
     // This catch block will handle errors from both conceptual sending and the simulation if Resend isn't set up.
     console.error('Error in submitContactForm:', error);
     // Differentiate message for user if it's a config issue vs. general failure
     if (error instanceof Error && error.message.includes("Resend API key not configured")) {
-         return { success: false, message: 'Email sending is not fully configured on the server. (Simulation fallback)' };
+         return { success: false, message: 'Email sending is not fully configured on the server.' };
+    }
+    if (error instanceof Error) {
+        return { success: false, message: `An unexpected error occurred: ${error.message}` };
     }
     return { success: false, message: 'An unexpected error occurred while trying to send the message.' };
   }
