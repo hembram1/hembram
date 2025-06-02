@@ -29,22 +29,29 @@ export async function submitContactForm(
   }
 
   const { name, email, message } = parsedValues.data;
+  const recipientEmail = 'hembramwork1@gmail.com';
 
-  // In a real application, you would integrate with an email service here.
-  // For example, using Nodemailer, SendGrid, Resend, etc.
-  console.log('New contact form submission:');
-  console.log('Name:', name);
-  console.log('Email:', email);
-  console.log('Message:', message);
+  // --- Email Sending Logic (Simulation) ---
+  // In a real application, you would integrate with an email service here
+  // to send the email.
+  // Examples:
+  // - Using Resend: await resend.emails.send({ from: '...', to: recipientEmail, subject: '...', html: '...' });
+  // - Using Nodemailer: setup a transporter and transporter.sendMail({ from: '...', to: recipientEmail, subject: '...', text: '...' });
 
-  // Simulate a delay and potential error for demonstration
+  console.log('--- Simulating Email Preparation ---');
+  console.log(`Recipient: ${recipientEmail}`);
+  console.log(`Sender Name: ${name}`);
+  console.log(`Sender Email: ${email}`);
+  console.log('Subject: New Contact Form Submission');
+  console.log('Body:');
+  console.log(message);
+  console.log('--- End of Email Simulation ---');
+
+  // Simulate a delay for demonstration
   await new Promise(resolve => setTimeout(resolve, 1000));
 
-  // Simulate a random success/failure
-  // const shouldSucceed = Math.random() > 0.2; // 80% chance of success
-  // if (!shouldSucceed) {
-  //   return { success: false, message: 'Simulated server error. Please try again.' };
-  // }
-
-  return { success: true, message: 'Form submitted successfully!' };
+  // In a real scenario, the success/failure would depend on the email service's response.
+  // For this simulation, we'll assume success.
+  return { success: true, message: 'Form submitted successfully! (Email sending simulated)' };
 }
+
