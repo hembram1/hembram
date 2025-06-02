@@ -58,7 +58,7 @@ export default function AuthorBio() {
                     asChild
                     variant="secondary"
                     size="icon"
-                    className="rounded-full"
+                    className="rounded-full transition-transform duration-200 ease-in-out hover:scale-110 active:scale-95"
                     title={`Follow ${name} on ${link.platform}`}
                   >
                     <a href={link.url} target="_blank" rel="noopener noreferrer">
@@ -74,7 +74,7 @@ export default function AuthorBio() {
                     asChild
                     variant="secondary"
                     size="sm" 
-                    className="rounded-full"
+                    className="rounded-full transition-transform duration-200 ease-in-out hover:scale-110 active:scale-95"
                     title={`Follow ${name} on ${link.platform}`}
                   >
                      <a href={link.url} target="_blank" rel="noopener noreferrer">
