@@ -71,9 +71,7 @@ export default function BookDetailPage() {
   }
   
   const GenreIcon = book.genreIconName; 
-  const PurchaseLinkIcon = ExternalLink; 
-
-  const amazonLink = book.purchaseLinks.find(link => link.retailer === 'Amazon');
+  const DefaultPurchaseLinkIcon = ExternalLink; 
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -132,14 +130,19 @@ export default function BookDetailPage() {
             <h2 className="text-3xl font-headline font-semibold text-primary mb-6 flex items-center">
               <ShoppingCart className="mr-3 h-7 w-7" /> Purchase This Book
             </h2>
-            {amazonLink ? (
+            {book.purchaseLinks && book.purchaseLinks.length > 0 ? (
               <div className="flex flex-wrap gap-4">
-                <Button asChild variant="outline" size="lg" className="border-accent text-accent hover:bg-accent hover:text-accent-foreground">
-                  <a href={amazonLink.url} target="_blank" rel="noopener noreferrer">
-                    {amazonLink.iconName ? <amazonLink.iconName className="mr-2 h-5 w-5" /> : <PurchaseLinkIcon className="mr-2 h-5 w-5" /> }
-                    Buy from {amazonLink.retailer}
-                  </a>
-                </Button>
+                {book.purchaseLinks.map(link => {
+                  const IconComponent = link.iconName || DefaultPurchaseLinkIcon;
+                  return (
+                    <Button key={link.retailer} asChild variant="outline" size="lg" className="border-accent text-accent hover:bg-accent hover:text-accent-foreground">
+                      <a href={link.url} target="_blank" rel="noopener noreferrer">
+                        <IconComponent className="mr-2 h-5 w-5" />
+                        Buy from {link.retailer}
+                      </a>
+                    </Button>
+                  );
+                })}
               </div>
             ) : (
               <p className="text-muted-foreground text-base md:text-lg">Purchase links are not available at this moment.</p>
@@ -150,3 +153,4 @@ export default function BookDetailPage() {
     </div>
   );
 }
+
