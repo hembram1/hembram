@@ -1,10 +1,11 @@
+
 // src/app/admin/layout.tsx
 'use client';
 
 import type { Metadata } from 'next'; // Metadata type can still be used for static parts
 import Link from 'next/link';
 import { Shield, Settings, User, BookOpen, Link2, LayoutDashboard, PenTool, LogOut } from 'lucide-react';
-import { Sidebar, SidebarProvider, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarHeader, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
+import { Sidebar, SidebarProvider, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarHeader, SidebarFooter, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useEffect, useState, Suspense } from 'react';
