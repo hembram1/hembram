@@ -5,7 +5,7 @@ import BookCard from '@/components/BookCard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { books, author } from '@/lib/constants'; // Import author
-import { ArrowRight, PenTool } from 'lucide-react';
+import { ArrowRight, PenTool, Library } from 'lucide-react';
 import TypingAnimation from '@/components/TypingAnimation';
 
 export default function HomePage() {
@@ -54,20 +54,25 @@ export default function HomePage() {
       </section>
 
       <section id="featured-books" className="mb-12">
-        <Card className="max-w-3xl mx-auto overflow-hidden shadow-xl rounded-2xl p-6 sm:p-8 md:p-10 relative bg-card text-center">
-          <div
-            className="absolute -top-8 -right-8 w-28 h-28 sm:-top-10 sm:-right-10 sm:w-36 sm:h-36 md:-top-12 md:-right-12 md:w-44 md:h-44 lg:-top-16 lg:-right-16 bg-accent/10 rounded-full transform rotate-12 pointer-events-none -z-0"
-            aria-hidden="true"
-          />
-          <div className="relative z-10">
-            <h2 className="inline-block text-3xl font-headline font-semibold text-primary pb-3 border-b-2 border-accent/70">
+        <div className="relative max-w-3xl mx-auto">
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 bg-card/80 backdrop-blur-lg shadow-md rounded-tl-2xl rounded-br-2xl py-2 px-5 flex items-center gap-3">
+            <Library className="h-7 w-7 text-primary" />
+            <h2 className="text-2xl font-headline font-semibold text-primary">
               Featured Books
             </h2>
-            <p className="mt-4 text-md sm:text-lg text-foreground/80 max-w-2xl mx-auto">
-              A curated selection of Hembram&apos;s most captivating works to start your journey.
-            </p>
           </div>
-        </Card>
+          <Card className="relative max-w-3xl mx-auto shadow-xl rounded-2xl bg-card text-center px-6 sm:px-8 md:px-10 pb-6 sm:pb-8 md:pb-10 pt-12 sm:pt-14 md:pt-16">
+            <div
+              className="absolute -top-8 -right-8 w-28 h-28 sm:-top-10 sm:-right-10 sm:w-36 sm:h-36 md:-top-12 md:-right-12 md:w-44 md:h-44 lg:-top-16 lg:-right-16 bg-accent/10 rounded-full transform rotate-12 pointer-events-none -z-0"
+              aria-hidden="true"
+            />
+            <div className="relative z-10">
+              <p className="mt-4 text-md sm:text-lg text-foreground/80 max-w-2xl mx-auto">
+                A curated selection of Hembram&apos;s most captivating works to start your journey.
+              </p>
+            </div>
+          </Card>
+        </div>
 
         {featuredBooks.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
