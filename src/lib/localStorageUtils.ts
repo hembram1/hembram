@@ -5,7 +5,7 @@
 import { author as defaultAuthorConst, books as defaultBooksConst } from '@/lib/constants';
 import type { Author, Book, SocialLink, Review, PurchaseLink } from '@/lib/types';
 
-const AUTHOR_KEY = 'hembram_author_data_v2'; // Incremented version due to schema change
+const AUTHOR_KEY = 'hembram_author_data_v2';
 const BOOKS_KEY = 'hembram_books_data_v1';
 
 function safeJsonParse<T>(jsonString: string | null, defaultValue: T): T {
@@ -17,6 +17,17 @@ function safeJsonParse<T>(jsonString: string | null, defaultValue: T): T {
     return defaultValue;
   }
 }
+
+// Helper function to ensure reviews and purchaseLinks are arrays
+function ensureBookArrays(book: Book | Omit<Book, 'id'> | Partial<Book>): Book {
+  const completeBook = book as Book; // Cast for easier handling, assuming id will be present or added
+  return {
+    ...completeBook,
+    reviews: Array.isArray(completeBook.reviews) ? completeBook.reviews : [],
+    purchaseLinks: Array.isArray(completeBook.purchaseLinks) ? completeBook.purchaseLinks : [],
+  };
+}
+
 
 // --- Author Data ---
 export function getAuthorData(): Author {
@@ -30,7 +41,6 @@ export function getAuthorData(): Author {
       return { ...link, iconName: defaultLink?.iconName || link.iconName };
     });
   }
-  // Ensure new fields have defaults if loading older data structure
   if (parsedAuthor.siteTitle === undefined) {
     parsedAuthor.siteTitle = defaultAuthorConst.siteTitle;
   }
@@ -55,27 +65,37 @@ export function saveAuthorData(authorData: Author): void {
 
 // --- Books Data ---
 export function getBooksData(): Book[] {
-  if (typeof window === 'undefined') return [...defaultBooksConst];
+  if (typeof window === 'undefined') return [...defaultBooksConst].map(ensureBookArrays);
   const storedData = localStorage.getItem(BOOKS_KEY);
-  const parsedBooks = safeJsonParse<Book[]>(storedData, [...defaultBooksConst]);
+  // Provide defaultBooksConst, ensuring each book in it also passes through ensureBookArrays
+  const parsedBooks = safeJsonParse<Book[]>(storedData, [...defaultBooksConst].map(ensureBookArrays));
 
    return parsedBooks.map(book => {
-    const defaultBook = defaultBooksConst.find(db => db.id === book.id);
-    const purchaseLinks = book.purchaseLinks.map(pl => {
+    const bookWithEnsuredArrays = ensureBookArrays(book); // Ensure arrays before icon mapping
+    const defaultBook = defaultBooksConst.find(db => db.id === bookWithEnsuredArrays.id);
+
+    const purchaseLinksWithIcons = (bookWithEnsuredArrays.purchaseLinks).map(pl => {
         const defaultPurchaseLink = defaultBook?.purchaseLinks.find(dpl => dpl.retailer === pl.retailer);
         return {...pl, iconName: defaultPurchaseLink?.iconName || pl.iconName};
     });
-    return { ...book, genreIconName: defaultBook?.genreIconName || book.genreIconName, purchaseLinks };
+    return {
+      ...bookWithEnsuredArrays,
+      genreIconName: defaultBook?.genreIconName || bookWithEnsuredArrays.genreIconName,
+      purchaseLinks: purchaseLinksWithIcons
+    };
   });
 }
 
 export function saveBooksData(booksData: Book[]): void {
   if (typeof window === 'undefined') return;
-  const serializableBooks = booksData.map(book => ({
-    ...book,
+  const serializableBooks = booksData.map(book => {
+    const cleanBook = ensureBookArrays(book); // Ensure arrays are present before serialization
+    return {
+    ...cleanBook,
     genreIconName: undefined, 
-    purchaseLinks: book.purchaseLinks.map(pl => ({retailer: pl.retailer, url: pl.url}))
-  }));
+    purchaseLinks: cleanBook.purchaseLinks.map(pl => ({retailer: pl.retailer, url: pl.url}))
+    };
+  });
   localStorage.setItem(BOOKS_KEY, JSON.stringify(serializableBooks));
   window.dispatchEvent(new CustomEvent('booksDataUpdated'));
 }
@@ -149,14 +169,26 @@ export function deleteSocialLinkFromStorage(platformToDelete: string): Author {
 }
 
 // Books
-export function addBookToStorage(newBookData: Omit<Book, 'id' | 'genreIconName'> & { purchaseLinks: PurchaseLink[], reviews: Review[] }): Book {
-  const books = getBooksData();
+// Type for newBookData in addBookToStorage ensures that if purchaseLinks/reviews are provided, they are arrays.
+// For simpler forms, they might be omitted, and then ensureBookArrays will default them to [].
+export function addBookToStorage(newBookData: Omit<Book, 'id' | 'genreIconName'>): Book {
+  const books = getBooksData(); // Ensures existing books are clean
+
+  // Ensure the new book data also has arrays for reviews and purchaseLinks
+  const newBookWithEnsuredArrays = ensureBookArrays({
+      ...newBookData, // Form data
+      // Explicitly ensure reviews and purchaseLinks are arrays if not already
+      reviews: Array.isArray(newBookData.reviews) ? newBookData.reviews : [],
+      purchaseLinks: Array.isArray(newBookData.purchaseLinks) ? newBookData.purchaseLinks : [],
+  });
+
+
   const newBook: Book = {
     id: `book-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    ...newBookData,
-    purchaseLinks: newBookData.purchaseLinks?.map(pl => ({ ...pl, iconName: undefined })),
-    genreIconName: undefined,
+    ...newBookWithEnsuredArrays, // Contains form data + ensured arrays
+    genreIconName: undefined, // Will be set by logic below
   };
+  
   const defaultBookMatch = defaultBooksConst.find(db => db.genre.toLowerCase() === newBook.genre.toLowerCase());
   if (defaultBookMatch) {
       newBook.genreIconName = defaultBookMatch.genreIconName;
@@ -167,37 +199,52 @@ export function addBookToStorage(newBookData: Omit<Book, 'id' | 'genreIconName'>
   }
 
   const updatedBooks = [...books, newBook];
-  saveBooksData(updatedBooks);
+  saveBooksData(updatedBooks); // saveBooksData will also call ensureBookArrays on each book
   return newBook;
 }
 
-export function updateBookInStorage(bookId: string, updatedBookData: Omit<Book, 'id' | 'genreIconName'> & { purchaseLinks: PurchaseLink[], reviews: Review[] }): Book | undefined {
-  let books = getBooksData();
-  let bookToUpdate: Book | undefined;
+// 'updates' comes from BookFormData, which doesn't include reviews or purchaseLinks.
+// So we merge with the existing book from localStorage which *should* have these as arrays due to getBooksData.
+export function updateBookInStorage(bookId: string, updates: Partial<Omit<Book, 'id' | 'genreIconName'>>): Book | undefined {
+  let books = getBooksData(); // Ensures all books in 'books' have .reviews and .purchaseLinks as arrays
+  let foundBookToUpdate: Book | undefined;
+
   const updatedBooks = books.map(book => {
     if (book.id === bookId) {
-      bookToUpdate = {
-        ...book, // Preserve existing ID, reviews, purchase links unless explicitly changed
-        ...updatedBookData, // Apply updates
-        // Ensure complex fields are handled
-        purchaseLinks: updatedBookData.purchaseLinks?.map(pl => ({ ...pl, iconName: undefined })) || book.purchaseLinks,
-        reviews: updatedBookData.reviews || book.reviews,
-        genreIconName: undefined, 
+      // 'book' here is guaranteed by getBooksData to have .reviews and .purchaseLinks as arrays.
+      // 'updates' contains only the fields from the form.
+      const mergedBookData = {
+        ...book,    // Existing book data (with arrays for reviews/purchaseLinks)
+        ...updates, // Form updates (simple fields like title, summary, etc.)
       };
-      const defaultBookMatch = defaultBooksConst.find(db => db.genre.toLowerCase() === bookToUpdate!.genre.toLowerCase());
+      
+      // Ensure merged data still has arrays (though spread from 'book' should ensure this)
+      // and then apply icon logic.
+      foundBookToUpdate = ensureBookArrays(mergedBookData) as Book;
+
+
+      const defaultBookMatch = defaultBooksConst.find(db => db.genre.toLowerCase() === foundBookToUpdate!.genre.toLowerCase());
       if (defaultBookMatch) {
-          bookToUpdate.genreIconName = defaultBookMatch.genreIconName;
-           bookToUpdate.purchaseLinks = bookToUpdate.purchaseLinks.map(pl => {
+          foundBookToUpdate.genreIconName = defaultBookMatch.genreIconName;
+           foundBookToUpdate.purchaseLinks = foundBookToUpdate.purchaseLinks.map(pl => {
               const defaultPL = defaultBookMatch.purchaseLinks.find(dpl => dpl.retailer === pl.retailer);
               return {...pl, iconName: defaultPL?.iconName};
           });
+      } else {
+        foundBookToUpdate.genreIconName = undefined;
       }
-      return bookToUpdate;
+      return foundBookToUpdate;
     }
     return book;
   });
-  saveBooksData(updatedBooks);
-  return bookToUpdate;
+
+  if (!foundBookToUpdate) {
+    console.warn(`Book with ID ${bookId} not found for update.`);
+    return undefined;
+  }
+  
+  saveBooksData(updatedBooks); // saveBooksData also calls ensureBookArrays on each book
+  return foundBookToUpdate;
 }
 
 
@@ -211,13 +258,16 @@ export function deleteBookFromStorage(bookId: string): Book[] {
 // Initialize if not present
 if (typeof window !== 'undefined') {
   if (!localStorage.getItem(AUTHOR_KEY)) {
-    // Check if siteTitle or logoUrl are missing from constants, add them if so
     const initialAuthorData = {...defaultAuthorConst};
     if (initialAuthorData.siteTitle === undefined) initialAuthorData.siteTitle = "Hembram - Official Author Website";
     if (initialAuthorData.logoUrl === undefined) initialAuthorData.logoUrl = "";
     saveAuthorData(initialAuthorData);
   }
   if (!localStorage.getItem(BOOKS_KEY)) {
+    // saveBooksData internally calls ensureBookArrays for each book
     saveBooksData(defaultBooksConst);
   }
 }
+
+
+    
