@@ -44,7 +44,6 @@ export default function HomePage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
         <span className="text-8xl font-headline font-bold text-primary animate-pulse">H.</span>
-        <p className="mt-4 text-lg text-muted-foreground">Loading page content...</p>
       </div>
     );
   }

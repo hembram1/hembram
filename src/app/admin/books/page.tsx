@@ -69,7 +69,6 @@ export default function AdminBooksPage() {
     return (
       <div className="flex flex-col items-center justify-center py-16">
         <span className="text-7xl font-headline font-bold text-primary animate-pulse">H.</span>
-        <p className="mt-3 text-md text-muted-foreground">Loading books...</p>
       </div>
     );
   }

@@ -72,7 +72,6 @@ function AdminContent({ children }: { children: React.ReactNode }) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
         <span className="text-8xl font-headline font-bold text-primary animate-pulse">H.</span>
-        <p className="mt-4 text-lg text-muted-foreground">Loading Admin Area...</p>
       </div>
     );
   }
@@ -84,7 +83,6 @@ function AdminContent({ children }: { children: React.ReactNode }) {
      return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
         <span className="text-8xl font-headline font-bold text-primary animate-pulse">H.</span>
-        <p className="mt-4 text-lg text-muted-foreground">Redirecting...</p>
       </div>
     );
   }
@@ -100,7 +98,6 @@ function AdminContent({ children }: { children: React.ReactNode }) {
      return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
         <span className="text-8xl font-headline font-bold text-primary animate-pulse">H.</span>
-        <p className="mt-4 text-lg text-muted-foreground">Redirecting to Dashboard...</p>
       </div>
     );
   }
@@ -185,7 +182,6 @@ export default function AdminLayout({
     <Suspense fallback={
       <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
         <span className="text-8xl font-headline font-bold text-primary animate-pulse">H.</span>
-        <p className="mt-4 text-lg text-muted-foreground">Loading page...</p>
       </div>
     }>
       <AdminContent>{children}</AdminContent>
