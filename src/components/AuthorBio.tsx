@@ -6,20 +6,38 @@ import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import { getAuthorData } from "@/lib/localStorageUtils";
+// import { getAuthorData } from "@/lib/localStorageUtils";
 import type { Author } from "@/lib/types";
 
 export default function AuthorBio() {
   const [authorData, setAuthorData] = useState<Author | null>(null);
+  // Polling interval in ms
+  const POLL_INTERVAL = 5000;
+  // Netlify Function endpoint
+  const ENDPOINT = "/.netlify/functions/author-bio";
 
   useEffect(() => {
-    setAuthorData(getAuthorData());
+    let isMounted = true;
+    let interval: NodeJS.Timeout;
 
-    const handleUpdate = () => {
-      setAuthorData(getAuthorData());
+    const fetchAuthorData = async () => {
+      try {
+        const res = await fetch(ENDPOINT);
+        if (!res.ok) throw new Error("Failed to fetch author data");
+        const data = await res.json();
+        if (isMounted) setAuthorData(data);
+      } catch (err) {
+        if (isMounted) setAuthorData(null);
+      }
     };
-    window.addEventListener('authorDataUpdated', handleUpdate);
-    return () => window.removeEventListener('authorDataUpdated', handleUpdate);
+
+    fetchAuthorData();
+    interval = setInterval(fetchAuthorData, POLL_INTERVAL);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
   if (!authorData) {
@@ -41,7 +59,7 @@ export default function AuthorBio() {
         <div className="w-full md:w-1/3 flex-shrink-0 flex flex-col items-center md:items-start">
           <div className="relative aspect-square w-full max-w-[200px] md:max-w-full mx-auto md:mx-0 rounded-tl-2xl rounded-br-2xl overflow-hidden shadow-md">
             <Image
-              src={authorImageUrl || 'https://placehold.co/250x250.png'}
+              src={authorImageUrl || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRj5bOqpTpEVgkEIaliSpUfZv1FLuyCSrANcA&s'}
               alt={`Portrait of ${name}`}
               fill
               className="object-cover"
